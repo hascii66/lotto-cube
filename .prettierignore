@@ -1,0 +1,9 @@
+node_modules
+dist
+package-lock.json
+playwright-report
+test-results
+premium-audit.json
+.venv
+.cache
+data/*.json

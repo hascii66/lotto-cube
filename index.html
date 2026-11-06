@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#112b35" />
+    <meta
+      name="description"
+      content="LottoCube ห้องแล็บวิเคราะห์สถิติหวยไทยย้อนหลัง เลข 3 ตัวและ 2 ตัว จากข้อมูลจริง พร้อมสูตรคำนวณที่ตรวจสอบได้"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <script>
+      try {
+        const theme = localStorage.getItem('lottocube.theme') || 'system';
+        const resolved =
+          theme === 'system'
+            ? matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light'
+            : theme;
+        document.documentElement.dataset.theme = resolved;
+        document.documentElement.style.colorScheme = resolved;
+        document.documentElement.lang =
+          localStorage.getItem('lottocube.language') === 'en' ? 'en' : 'th';
+      } catch {}
+    </script>
+    <title>LottoCube</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
