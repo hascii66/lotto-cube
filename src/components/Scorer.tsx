@@ -30,7 +30,7 @@ export function Scorer({
   const [results, setResults] = useState<string[]>(initial ? [initial] : []);
   const [invalid, setInvalid] = useState(false);
   const error = invalid
-    ? t('กรอกเลข {0} หลักอย่างน้อย 1 ชุด และไม่เกิน 3 ชุด เช่น {1}', [
+    ? t('enter_one_to_three_digit_numbers', [
         mode,
         mode === '3' ? '079' : '09',
       ])
@@ -64,16 +64,16 @@ export function Scorer({
   return (
     <>
       <Panel
-        title={t('ลองตรวจเลขที่คุณสนใจ')}
+        title={t('explore_a_number_you_have_in')}
         eyebrow="NUMBER EXPLORER"
         aside={<SearchCheck size={23} className="text-accent" />}
       >
         <p className="section-description">
           {tx(
-            'เทียบกับสถิติในช่วงที่เลือก พร้อมค้นหาเลขตรงและเลขกลับจากฐานข้อมูลทั้งหมด',
+            'compare_against_your_selected_period_and',
           )}
         </p>
-        <div className="segmented" aria-label={t('จำนวนหลัก')}>
+        <div className="segmented" aria-label={t('number_of_digits')}>
           {(['3', '2'] as const).map((value) => (
             <button
               key={value}
@@ -81,7 +81,7 @@ export function Scorer({
               className={mode === value ? 'selected' : ''}
               onClick={() => switchMode(value)}
             >
-              {value === '3' ? t('3 ตัว') : t('2 ตัว')}
+              {value === '3' ? t('three_digits') : t('two_digits')}
             </button>
           ))}
         </div>
@@ -90,9 +90,9 @@ export function Scorer({
             {inputs.map((value, index) => (
               <div key={index}>
                 <label htmlFor={`scorer-${index}`}>
-                  {tx('ชุดที่')}
+                  {tx('number')}
                   {index + 1}
-                  {index > 0 && <small>{tx('(ไม่บังคับ)')}</small>}
+                  {index > 0 && <small>{tx('optional')}</small>}
                 </label>
                 <input
                   className="number-input mono"
@@ -120,7 +120,7 @@ export function Scorer({
             className="button button-primary"
             disabled={!draws.length}
           >
-            {tx('เช็คสถิติ & คะแนน')}
+            {tx('check_statistics_score')}
             <ArrowRight size={17} />
           </button>
         </form>
@@ -143,15 +143,15 @@ export function Scorer({
             <div className="score-result-heading">
               <div>
                 <span className="eyebrow">
-                  {tx('ผลวิเคราะห์เลข')}
+                  {tx('analysis_for')}
                   {mode}
-                  {tx('ตัว')}
+                  {tx('digits')}
                 </span>
                 <h2 className="result-number mono">{number}</h2>
               </div>
               <div className="score-total">
                 <strong className="mono">{score.toFixed(1)}</strong>
-                <span>{tx('/ 100 คะแนน')}</span>
+                <span>{tx('100_points')}</span>
               </div>
             </div>
             <div className="score-components">
@@ -161,12 +161,12 @@ export function Scorer({
                     {
                       (mode === '3'
                         ? [
-                            t('หลักร้อย'),
-                            t('หลักสิบ'),
-                            t('หลักหน่วย'),
-                            t('ผลรวมแต้ม'),
+                            t('hundreds'),
+                            t('tens'),
+                            t('units'),
+                            t('digit_sum_2'),
                           ]
-                        : [t('หลักสิบ'), t('หลักหน่วย')])[i]
+                        : [t('tens'), t('units')])[i]
                     }
                   </span>
                   <b className="mono">
@@ -179,13 +179,13 @@ export function Scorer({
             <div className="permutations-heading">
               <h3>
                 <CornerDownRight size={18} />
-                {tx('เลขกลับ')}
-                {variants.length} {tx('ชุดที่ไม่ซ้ำ')}
+                {tx('permutations')}
+                {variants.length} {tx('unique_arrangements')}
               </h3>
               <span>
-                {tx('เลขตรงเคยพบ')}
+                {tx('exact_matches')}
                 {exact.length}
-                {tx('ครั้ง')}
+                {tx('times')}
               </span>
             </div>
             <div className="permutation-grid">
@@ -196,8 +196,8 @@ export function Scorer({
                     <b className="mono">{v}</b>
                     <span>
                       {count
-                        ? t('พบ {0} ครั้ง', [count])
-                        : t('ไม่พบในฐานข้อมูล')}
+                        ? t('found_times', [count])
+                        : t('not_found')}
                     </span>
                   </div>
                 );
@@ -206,10 +206,10 @@ export function Scorer({
             {hits.length ? (
               <details className="hit-details" open>
                 <summary>
-                  {tx('ประวัติเลขตรงและเลขกลับ ·')}
+                  {tx('exact_matches_and_permutations')}
                   {hits.length}
-                  {tx('รายการจาก')} {allDraws.length}
-                  {tx('งวด (ทุกรางวัล)')}
+                  {tx('results_from_2')} {allDraws.length}
+                  {tx('draws_all_awards')}
                 </summary>
                 <ul className="hit-list">
                   {hits.map((hit, i) => (
@@ -229,16 +229,16 @@ export function Scorer({
               </details>
             ) : (
               <Empty>
-                {tx('ไม่พบเลขตรงหรือเลขกลับชุดนี้ในฐานข้อมูล')}
+                {tx('no_exact_matches_or_permutations_found')}
                 {allDraws.length}
-                {tx('งวด การไม่เคยออกไม่ได้เพิ่มโอกาสในงวดถัดไป')}
+                {tx('draws_absence_does_not_increase_a')}
               </Empty>
             )}
             <p className="subtle-note">
-              {tx('คะแนนใช้ข้อมูล')}
+              {tx('score_based_on')}
               {draws.length}
               {tx(
-                'งวดตามตัวกรอง · ประวัติค้นจากฐานข้อมูลทั้งหมดโดยไม่จำกัดประเภทรางวัล',
+                'filtered_draws_history_covers_the_entire',
               )}
             </p>
           </Panel>

@@ -30,7 +30,7 @@ export function Panel({
   );
 }
 export function Empty({
-  children = t('ยังไม่มีผลสลากในช่วงที่เลือก ลองเลือกวันอื่นหรือเพิ่มจำนวนงวด'),
+  children = t('no_results_in_this_period_try'),
 }: {
   children?: ReactNode;
 }) {
@@ -89,7 +89,7 @@ export function Modal({
         </div>
         <button
           className="icon-button"
-          aria-label={t('ปิดหน้าต่าง')}
+          aria-label={t('close_dialog')}
           disabled={busy}
           onClick={onClose}
         >
@@ -117,19 +117,19 @@ export function SearchField({
     <div className="search-field">
       <Search size={17} />
       <label className="sr-only" htmlFor="history-search">
-        {tx('ค้นหาเลขในฐานข้อมูล')}
+        {tx('search_the_draw_archive')}
       </label>
       <input
         ref={ref}
         id="history-search"
-        placeholder={t('ค้นหาเลข 2 หรือ 3 ตัว...')}
+        placeholder={t('search_2_or_3_digits')}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
       {value && (
         <button
           className="icon-button"
-          aria-label={t('ล้างคำค้นหา')}
+          aria-label={t('clear_search')}
           onClick={() => {
             onChange('');
             ref.current?.focus();
@@ -165,7 +165,7 @@ export function Formula({
   return (
     <details className="formula">
       <summary>
-        {tx('สูตรคำนวณที่ตรวจสอบได้')}
+        {tx('see_the_calculation')}
         <Info size={14} />
       </summary>
       <div>
@@ -173,27 +173,27 @@ export function Formula({
           <>
             <p>
               {tx(
-                'งวดถัดไปใช้ข้อมูลทุกงวดในคลัง ส่วนงวดย้อนหลังใช้เฉพาะข้อมูลก่อนวันที่เลือก ผลของงวดที่เลือกใช้เปรียบเทียบเท่านั้น ไม่นำมาคิดคะแนน',
+                'next_draw_picks_use_all_stored',
               )}
             </p>
             <p>
               {tx(
-                'คะแนนแต่ละหลัก = จำนวนครั้งที่เลขนั้นปรากฏในหลักนั้น ÷ จำนวนครั้งสูงสุดในหลักเดียวกัน คะแนนรวม = ค่าเฉลี่ยคะแนนทุกหลัก × 100 ใช้เลขท้าย 2 ตัว เลขท้าย 3 ตัว และรางวัลที่ 1 แยกกันจากช่วงข้อมูลที่แสดง',
+                'each_position_scores_its_digit_s',
               )}
             </p>
             <p>
               {tx(
-                'เลข 2 ตัวอันดับต้นอาจเกิดจากเลขที่พบบ่อยที่สุดของหลักสิบรวมกับเลขที่พบบ่อยที่สุดของหลักหน่วย คะแนน 100 จึงไม่ได้แปลว่าคู่นั้นออกบ่อยที่สุด',
+                'a_top_2_digit_pair_can',
               )}
             </p>
             <p>
               {tx(
-                'วันในสัปดาห์ไม่มีผลกับเลขคัด สูตรจัดอันดับใช้ความถี่แยกหลักจากผลย้อนหลังเท่านั้น',
+                'weekday_does_not_affect_the_picks',
               )}
             </p>
             <p>
               {tx(
-                'คัด 10 เลขที่มีคะแนนรวมสูงสุดจากเลขที่เป็นไปได้ทั้งหมด รวมเลขที่ยังไม่เคยออก หากคะแนนเท่ากันเรียงตามเลข เก็บศูนย์นำหน้าและลำดับหลักเดิม งวดถัดไปหมายถึงงวดหลังข้อมูลล่าสุดในคลัง ไม่ระบุวันออกรางวัลล่วงหน้า',
+                'the_10_highest_scoring_combinations_are',
               )}
             </p>
           </>
@@ -201,19 +201,19 @@ export function Formula({
           <>
             <p>
               {tx(
-                'คะแนนเลข 3 ตัว = คะแนนหลักร้อย + หลักสิบ + หลักหน่วย + ผลรวมแต้ม ส่วนละไม่เกิน 25 คะแนน แต่ละส่วน = ความถี่ที่พบ ÷ ความถี่สูงสุดในส่วนนั้น × 25',
+                'three_digit_score_hundreds_tens_units',
               )}
             </p>
             {picks && (
               <p>
                 {tx(
-                  'คะแนนจัดอันดับ = คะแนนเลข 3 ตัว × 0.9 + (ความถี่โครงสร้างเลขนั้น ÷ ความถี่โครงสร้างสูงสุด) × 10 คำนวณเลข 000–999 ครบทุกชุด แล้วเรียงคะแนนจากมากไปน้อย หากเท่ากันเรียงตามเลข',
+                  'ranking_score_three_digit_score_0',
                 )}
               </p>
             )}
             <p>
               {tx(
-                'เลข 2 ตัวคิดหลักสิบและหลักหน่วย ส่วนละ 50 คะแนน คะแนนเป็นดัชนีความสอดคล้องกับข้อมูลย้อนหลัง ไม่ใช่เปอร์เซ็นต์โอกาสถูกรางวัล เลขที่ไม่เคยออกไม่ได้มีโอกาสเพิ่มขึ้นในงวดถัดไป',
+                'two_digit_scores_use_tens_and',
               )}
             </p>
           </>

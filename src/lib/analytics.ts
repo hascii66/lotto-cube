@@ -2,10 +2,10 @@ import { t } from './i18n';
 import type { Draw, Filters, Occurrence, PrizeType } from './types';
 import { weekdayOf } from './format';
 export const prizeLabels = (): Record<PrizeType, string> => ({
-  all: t('รวมทุก 3 ตัว · 5 ชุด/งวด'),
-  top: t('3 ตัวบน · ท้ายรางวัลที่ 1'),
-  front: t('เลขหน้า 3 ตัว · 2 ชุด/งวด'),
-  back: t('เลขท้าย 3 ตัว · 2 ชุด/งวด'),
+  all: t('all_3_digit_awards_5_per'),
+  top: t('last_3_digits_of_first_prize'),
+  front: t('front_3_digits_2_per_draw'),
+  back: t('last_3_digits_2_per_draw'),
 });
 export function selectDraws(draws: Draw[], filters: Filters) {
   const matching = [...draws]
@@ -105,21 +105,21 @@ export function findOccurrences(
   return draws.flatMap((draw) => {
     const prizes: [string, string][] =
       numbers[0]?.length === 6
-        ? [[draw.prize1, t('รางวัลที่ 1')]]
+        ? [[draw.prize1, t('first_prize')]]
         : numbers[0]?.length === 2
-          ? [[draw.last2, t('เลขท้าย 2 ตัว')]]
+          ? [[draw.last2, t('last_two_digits')]]
           : [
               ...(type === 'all' || type === 'top'
-                ? [[draw.prize1.slice(-3), t('3 ตัวบน')] as [string, string]]
+                ? [[draw.prize1.slice(-3), t('last_3_of_first_prize')] as [string, string]]
                 : []),
               ...(type === 'all' || type === 'front'
                 ? draw.front3.map(
-                    (v) => [v, t('เลขหน้า 3 ตัว')] as [string, string],
+                    (v) => [v, t('front_3_digits')] as [string, string],
                   )
                 : []),
               ...(type === 'all' || type === 'back'
                 ? draw.back3.map(
-                    (v) => [v, t('เลขท้าย 3 ตัว')] as [string, string],
+                    (v) => [v, t('last_three_digits')] as [string, string],
                   )
                 : []),
             ];

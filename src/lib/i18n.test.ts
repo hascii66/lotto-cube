@@ -3,6 +3,7 @@ import ts from 'typescript';
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import english from './en.json';
+import thai from './th.json';
 import { setLanguage, t } from './i18n';
 import { formatDate, weekdays } from './format';
 
@@ -21,14 +22,24 @@ describe('English and Thai locale contract', () => {
 
   it('translates placeholders and changes calendars and weekdays consistently', () => {
     setLanguage('en');
-    expect(t('{0} งวดในคลัง', [238])).toBe('238 stored draws');
+    expect(t('stored_draws', [238])).toBe('238 stored draws');
     expect(formatDate('2026-11-01')).toBe('1 November 2026');
     expect(weekdays()[0]).toBe('Sunday');
     setLanguage('th');
     expect(formatDate('2026-11-01')).toContain('2569');
   });
-  it('has an English entry for every Thai translation key used in application code', () => {
-    const missing: string[] = [];
+
+  it('contains strictly English keys in both en.json and th.json with complete key parity', () => {
+    const enKeys = Object.keys(english);
+    const thKeys = Object.keys(thai);
+
+    expect(enKeys.filter((k) => /[ก-๛]/.test(k))).toEqual([]);
+    expect(thKeys.filter((k) => /[ก-๛]/.test(k))).toEqual([]);
+    expect(new Set(thKeys)).toEqual(new Set(enKeys));
+  });
+
+  it('ensures every t and tx call in application code uses a valid English key', () => {
+    const invalidCalls: { file: string; text: string }[] = [];
     function scan(directory: string) {
       for (const item of readdirSync(directory, { withFileTypes: true })) {
         const path = resolve(directory, item.name);
@@ -47,13 +58,11 @@ describe('English and Thai locale contract', () => {
               ['t', 'tx'].includes(node.expression.text)
             ) {
               const key = node.arguments[0];
-              if (
-                key &&
-                ts.isStringLiteral(key) &&
-                /[ก-๛]/.test(key.text) &&
-                !(key.text.trim() in english)
-              )
-                missing.push(key.text);
+              if (key && (ts.isStringLiteral(key) || ts.isNoSubstitutionTemplateLiteral(key))) {
+                if (/[ก-๛]/.test(key.text) || !(key.text.trim() in english)) {
+                  invalidCalls.push({ file: path, text: key.text });
+                }
+              }
             }
             ts.forEachChild(node, visit);
           }
@@ -62,6 +71,6 @@ describe('English and Thai locale contract', () => {
       }
     }
     scan('src');
-    expect(missing).toEqual([]);
+    expect(invalidCalls).toEqual([]);
   });
 });

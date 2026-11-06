@@ -81,24 +81,24 @@ export function Preferences() {
   const [instructions, setInstructions] = useState(false);
   const Icon = theme === 'system' ? Monitor : theme === 'dark' ? Moon : Sun;
   const themeNames = {
-    system: t('ตามระบบ'),
-    light: t('สว่าง'),
-    dark: t('มืด'),
+    system: t('system'),
+    light: t('light'),
+    dark: t('dark'),
   };
   return (
     <div className="preferences">
       <button
         className="preference-button language-button"
         onClick={changeLanguage}
-        aria-label={t('เปลี่ยนภาษา / Change language')}
+        aria-label={t('change_language')}
       >
-        {language === 'th' ? 'EN' : t('ไทย')}
+        {language === 'th' ? 'EN' : t('text')}
       </button>
       <button
         className="preference-button"
         onClick={changeTheme}
-        aria-label={t('ธีม: {0} · เปลี่ยนธีม', [t(themeNames[theme])])}
-        title={t('ธีม: {0} · เปลี่ยนธีม', [t(themeNames[theme])])}
+        aria-label={t('theme_change_theme', [t(themeNames[theme])])}
+        title={t('theme_change_theme', [t(themeNames[theme])])}
       >
         <Icon size={19} />
       </button>
@@ -108,32 +108,32 @@ export function Preferences() {
           onClick={async () => {
             if (!(await install())) setInstructions(true);
           }}
-          aria-label={t('ติดตั้งแอป')}
-          title={t('ติดตั้งแอป')}
+          aria-label={t('install_app')}
+          title={t('install_app')}
         >
           <Download size={18} />
-          <span>{tx('ติดตั้งแอป')}</span>
+          <span>{tx('install_app')}</span>
         </button>
       )}
       {updateReady && (
         <button className="button button-small" onClick={applyUpdate}>
-          {tx('ใช้เวอร์ชันใหม่')}
+          {tx('use_new_version')}
         </button>
       )}
       {instructions && (
         <Modal
-          title={t('ติดตั้ง LottoCube')}
-          description={t('เพิ่มแอปไว้บนหน้าจอหลักเพื่อเปิดใช้งานได้สะดวก')}
+          title={t('install_lottocube')}
+          description={t('add_the_app_to_your_home')}
           onClose={() => setInstructions(false)}
         >
           <div className="install-instructions">
             <h3>iPhone / iPad</h3>
-            <p>{tx('เปิดใน Safari → กดแชร์ → เพิ่มไปยังหน้าจอโฮม')}</p>
+            <p>{tx('open_in_safari_share_add_to')}</p>
             <h3>Android / Chrome</h3>
-            <p>{tx('เปิดเมนู ⋮ → ติดตั้งแอป หรือ เพิ่มลงในหน้าจอหลัก')}</p>
+            <p>{tx('open_the_menu_install_app_or')}</p>
             <p>
               {tx(
-                'หลังเปิดออนไลน์ครั้งแรกแล้ว แอปและข้อมูลที่บันทึกไว้จะเปิดใช้งานแบบออฟไลน์ได้ การอัปเดตผลสลากต้องเชื่อมต่ออินเทอร์เน็ต',
+                'after_your_first_online_visit_the',
               )}
             </p>
           </div>
@@ -142,7 +142,7 @@ export function Preferences() {
               className="button button-primary"
               onClick={() => setInstructions(false)}
             >
-              {tx('เข้าใจแล้ว')}
+              {tx('got_it')}
             </button>
           </div>
         </Modal>

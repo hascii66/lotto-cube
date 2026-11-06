@@ -7,10 +7,10 @@ async function request() {
     signal: AbortSignal.timeout(60000),
   });
   if (!response.ok)
-    throw new Error(t('ยังตรวจสอบงวดล่าสุดไม่ได้ กำลังใช้ข้อมูลที่บันทึกไว้'));
+    throw new Error(t('latest_results_cannot_be_verified_using'));
   const payload = await response.json();
   if (!['current', 'stale'].includes(payload.status))
-    throw new Error(t('รูปแบบข้อมูลจากบริการผลสลากไม่ถูกต้อง'));
+    throw new Error(t('the_results_service_returned_an_invalid'));
   return {
     draws: parseDraws(payload.draws).map((draw) => ({
       ...draw,

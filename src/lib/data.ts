@@ -4,10 +4,10 @@ import { today } from './format';
 export const STORAGE_KEY = 'lottocube.draws.v1';
 export function validateDraw(value: unknown): Draw {
   if (!value || typeof value !== 'object')
-    throw new Error(t('แต่ละงวดต้องเป็นข้อมูลแบบ object'));
+    throw new Error(t('each_draw_must_be_an_object'));
   const d = value as Record<string, unknown>;
   if (typeof d.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(d.date))
-    throw new Error(t('วันที่ต้องเป็น ค.ศ. รูปแบบ YYYY-MM-DD'));
+    throw new Error(t('dates_must_use_the_gregorian_yyyy'));
   const parsed = new Date(`${d.date}T00:00:00Z`);
   if (
     isNaN(parsed.getTime()) ||
@@ -15,11 +15,11 @@ export function validateDraw(value: unknown): Draw {
     d.date < '1900-01-01' ||
     d.date > today()
   )
-    throw new Error(t('วันที่ไม่มีอยู่จริงหรือเป็นวันที่ในอนาคต'));
+    throw new Error(t('the_date_is_invalid_or_in'));
   if (typeof d.prize1 !== 'string' || !/^\d{6}$/.test(d.prize1))
-    throw new Error(t('รางวัลที่ 1 ต้องเป็นข้อความตัวเลข 6 หลัก เช่น 097863'));
+    throw new Error(t('first_prize_must_be_a_six'));
   if (typeof d.last2 !== 'string' || !/^\d{2}$/.test(d.last2))
-    throw new Error(t('เลขท้าย 2 ตัวต้องเป็นข้อความตัวเลข 2 หลัก เช่น 09'));
+    throw new Error(t('last_2_digits_must_be_a'));
   for (const field of ['front3', 'back3']) {
     if (
       !Array.isArray(d[field]) ||
@@ -27,7 +27,7 @@ export function validateDraw(value: unknown): Draw {
       !d[field].every((n) => typeof n === 'string' && /^\d{3}$/.test(n))
     )
       throw new Error(
-        t('เลขหน้าและเลขท้าย 3 ตัวต้องมีอย่างละ 2 ชุด ชุดละ 3 หลัก'),
+        t('front_and_last_three_digit_awards'),
       );
   }
   return {
@@ -45,18 +45,18 @@ export function validateDraw(value: unknown): Draw {
 }
 export function parseDraws(value: unknown): Draw[] {
   if (!Array.isArray(value) || value.length === 0 || value.length > 10000)
-    throw new Error(t('ไฟล์ต้องเป็น JSON array ที่มีข้อมูล 1–10,000 งวด'));
+    throw new Error(t('the_file_must_be_a_json'));
   const draws = value.map((d, i) => {
     try {
       return validateDraw(d);
     } catch (error) {
       throw new Error(
-        t('รายการที่ {0}: {1}', [i + 1, (error as Error).message]),
+        t('entry', [i + 1, (error as Error).message]),
       );
     }
   });
   if (new Set(draws.map((d) => d.date)).size !== draws.length)
-    throw new Error(t('พบวันที่ซ้ำในไฟล์ กรุณาเก็บไว้เพียงรายการเดียวต่อวัน'));
+    throw new Error(t('duplicate_draw_dates_found_keep_one'));
   return draws.sort((a, b) => b.date.localeCompare(a.date));
 }
 export function mergeDraws(

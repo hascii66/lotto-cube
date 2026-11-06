@@ -50,17 +50,17 @@ export function PositionChart({
         </div>
       </div>
       <p id={id} className="sr-only">
-        {tx('ความถี่')}
+        {tx('frequency')}
         {label}:{' '}
         {counts
           .map((c, i) =>
-            t('{0} ออก {1} ครั้ง ({2}%)', [i, c, percent(c, total).toFixed(1)]),
+            t('occurrences', [i, c, percent(c, total).toFixed(1)]),
           )
           .join(', ')}{' '}
-        {tx('ค่าคาดหวังเลขละ 10%')}
+        {tx('expected_share_10_per_digit')}
       </p>
       <div className="chart-leaders">
-        <span>{tx('พบบ่อย')}</span>
+        <span>{tx('most_frequent')}</span>
         {leaders.length ? (
           leaders.map((l) => (
             <span className="leader" key={l.digit}>
@@ -69,7 +69,7 @@ export function PositionChart({
             </span>
           ))
         ) : (
-          <span>{tx('ไม่มีข้อมูล')}</span>
+          <span>{tx('no_data')}</span>
         )}
       </div>
     </div>
@@ -86,14 +86,14 @@ export function Positions({
 }) {
   return (
     <Panel
-      title={t('ความถี่รายหลัก')}
+      title={t('frequency_by_position')}
       eyebrow="POSITIONAL FREQUENCY"
       aside={
         <span className="chart-legend">
           <i />
-          {tx('3 อันดับแรก')}
+          {tx('top_three')}
           <span className="legend-rule" />
-          {tx('ค่าคาดหวัง 10%')}
+          {tx('expected_10')}
         </span>
       }
     >
@@ -104,8 +104,8 @@ export function Positions({
             counts={counts}
             label={
               (two
-                ? [t('หลักสิบ'), t('หลักหน่วย')]
-                : [t('หลักร้อย'), t('หลักสิบ'), t('หลักหน่วย')])[i]
+                ? [t('tens'), t('units')]
+                : [t('hundreds'), t('tens'), t('units')])[i]
             }
             position={
               (two ? ['TENS', 'UNITS'] : ['HUNDREDS', 'TENS', 'UNITS'])[i]
@@ -114,11 +114,11 @@ export function Positions({
         ))}
       </div>
       <div className="panel-footnote">
-        {tx('นับจากเลข')}
+        {tx('based_on')}
         {two ? '2' : '3'}
-        {tx('ตัว')}
+        {tx('digits')}
         {total.toLocaleString('th-TH')}
-        {tx('ชุด · สัดส่วนที่พบจริงในช่วงที่เลือก')}
+        {tx('samples_observed_shares_for_the_selected')}
       </div>
     </Panel>
   );
@@ -127,23 +127,23 @@ export function Patterns({ stats }: { stats: ThreeStats }) {
   const rows = [
     {
       key: 'unique' as const,
-      name: t('เลขไม่ซ้ำ'),
+      name: t('distinct_digits'),
       example: 'ABC',
       expected: 72,
     },
     {
       key: 'double' as const,
-      name: t('เลขเบิ้ล / เลขหาม'),
+      name: t('one_repeated_pair'),
       example: 'AAB',
       expected: 27,
     },
-    { key: 'triple' as const, name: t('เลขตอง'), example: 'AAA', expected: 1 },
+    { key: 'triple' as const, name: t('three_identical_digits'), example: 'AAA', expected: 1 },
   ];
   return (
     <Panel
-      title={t('โครงสร้างของเลข')}
+      title={t('number_patterns_2')}
       eyebrow="PATTERN BREAKDOWN"
-      aside={<span className="mini-tag">{tx('เทียบค่าทฤษฎี')}</span>}
+      aside={<span className="mini-tag">{tx('theoretical_comparison')}</span>}
     >
       <div className="pattern-list">
         {rows.map((row) => {
@@ -167,12 +167,12 @@ export function Patterns({ stats }: { stats: ThreeStats }) {
                 </div>
                 <div className="pattern-meta">
                   <span>
-                    {tx('ค่าปกติ')}
+                    {tx('baseline')}
                     {row.expected}% · {stats.patterns[row.key]}
-                    {tx('ชุด')}
+                    {tx('samples')}
                   </span>
                   <span className={notable ? 'notable' : ''}>
-                    {notable ? t('ต่างจากทฤษฎี ≥10 จุด') : t('ปกติ')}
+                    {notable ? t('difference_10_points') : t('within_threshold')}
                   </span>
                 </div>
               </div>
@@ -183,23 +183,23 @@ export function Patterns({ stats }: { stats: ThreeStats }) {
       <div className="split-stats">
         <div>
           <span>
-            {tx('ต่ำ')}
+            {tx('low')}
             <small>000–499</small>
           </span>
           <b className="mono">{percent(stats.low, stats.total).toFixed(1)}%</b>
           <small>
-            {tx('สูง')}
+            {tx('high')}
             {percent(stats.total - stats.low, stats.total).toFixed(1)}%
           </small>
         </div>
         <div>
           <span>
-            {tx('แต้มคู่')}
-            <small>{tx('ผลรวมเลขโดด')}</small>
+            {tx('even_sum')}
+            <small>{tx('digit_sum')}</small>
           </span>
           <b className="mono">{percent(stats.even, stats.total).toFixed(1)}%</b>
           <small>
-            {tx('แต้มคี่')}
+            {tx('odd_sum')}
             {percent(stats.total - stats.even, stats.total).toFixed(1)}%
           </small>
         </div>
@@ -217,21 +217,21 @@ export function SumChart({ stats }: { stats: ThreeStats }) {
     ]++;
   return (
     <Panel
-      title={t('ผลรวมแต้ม 3 หลัก')}
+      title={t('three_digit_sums')}
       eyebrow="DIGIT SUM DISTRIBUTION"
-      aside={<span className="mini-tag">{tx('0–27 แต้ม')}</span>}
+      aside={<span className="mini-tag">{tx('0_27_points')}</span>}
     >
       <div className="sum-summary">
         <strong className="mono">{stats.total ? peak : '—'}</strong>
         <div>
-          <span>{tx('แต้มที่พบมากที่สุด')}</span>
+          <span>{tx('most_frequent_digit_sum')}</span>
           <small>
             {stats.total
-              ? t('{0} ชุด · {1}% ของข้อมูล', [
+              ? t('samples_of_the_data', [
                   max,
                   percent(max, stats.total).toFixed(1),
                 ])
-              : t('ยังไม่มีข้อมูลในช่วงนี้')}
+              : t('no_data_for_this_period')}
           </small>
         </div>
         <span className="sum-symbol" aria-hidden="true">
@@ -241,9 +241,9 @@ export function SumChart({ stats }: { stats: ThreeStats }) {
       <div
         className="sum-chart"
         role="img"
-        aria-label={t('ความถี่ผลรวมแต้ม: {0}', [
+        aria-label={t('digit_sum_frequency', [
           stats.sums
-            .map((count, sum) => t('{0} แต้ม {1} ครั้ง', [sum, count]))
+            .map((count, sum) => t('sum_occurrences', [sum, count]))
             .join(', '),
         ])}
       >
@@ -252,7 +252,7 @@ export function SumChart({ stats }: { stats: ThreeStats }) {
             <div
               className={`sum-bar ${count === max ? 'sum-peak' : ''}`}
               style={{ height: `${(count / max) * 100}%` }}
-              title={t('{0} แต้ม: {1} ชุด ({2}%) · ทฤษฎี {3}%', [
+              title={t('sum_samples_theoretical', [
                 sum,
                 count,
                 percent(count, stats.total).toFixed(1),
@@ -266,13 +266,13 @@ export function SumChart({ stats }: { stats: ThreeStats }) {
         ))}
       </div>
       <div className="sum-axis">
-        <span>{tx('แต้มต่ำ')}</span>
-        <span>{tx('ผลรวมหลักร้อย + สิบ + หน่วย')}</span>
-        <span>{tx('แต้มสูง')}</span>
+        <span>{tx('low_sum')}</span>
+        <span>{tx('hundreds_tens_units')}</span>
+        <span>{tx('high_sum')}</span>
       </div>
       <p className="subtle-note">
         {tx(
-          'แต้มกลางมีจำนวนชุดเลขเป็นไปได้มากกว่าแต้มปลาย จึงพบได้บ่อยตามธรรมชาติ',
+          'middle_sums_have_more_possible_combinations',
         )}
       </p>
     </Panel>

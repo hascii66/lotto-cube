@@ -28,7 +28,7 @@ const dictionaries: Record<Language, Record<string, string>> = {
 export function t(text: string, values: unknown[] = []): string {
   const dict = dictionaries[language] ?? dictionaries.en;
   const key = text.trim();
-  const translated = dict[key] ?? (language === 'th' ? text : (dictionaries.en[key] ?? text));
+  const translated = dict[key] ?? dictionaries.en[key] ?? dictionaries.th[key] ?? key;
   return translated.replace(/\{(\d+)\}/g, (_, index) =>
     String(values[Number(index)] ?? ''),
   );

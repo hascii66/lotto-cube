@@ -14,33 +14,33 @@ interface Props {
   onSuccess: (message: string, history?: boolean) => void;
 }
 const getFields = () => [
-  { key: 'date', label: t('วันที่ออกรางวัล'), size: 0, placeholder: '' },
-  { key: 'prize1', label: t('รางวัลที่ 1'), size: 6, placeholder: '097863' },
+  { key: 'date', label: t('draw_date'), size: 0, placeholder: '' },
+  { key: 'prize1', label: t('first_prize'), size: 6, placeholder: '097863' },
   {
     key: 'frontA',
-    label: t('เลขหน้า 3 ตัว · ชุดที่ 1'),
+    label: t('front_3_digits_first'),
     size: 3,
     placeholder: '290',
   },
   {
     key: 'frontB',
-    label: t('เลขหน้า 3 ตัว · ชุดที่ 2'),
+    label: t('front_3_digits_second'),
     size: 3,
     placeholder: '742',
   },
   {
     key: 'backA',
-    label: t('เลขท้าย 3 ตัว · ชุดที่ 1'),
+    label: t('last_3_digits_first'),
     size: 3,
     placeholder: '881',
   },
   {
     key: 'backB',
-    label: t('เลขท้าย 3 ตัว · ชุดที่ 2'),
+    label: t('last_3_digits_second'),
     size: 3,
     placeholder: '339',
   },
-  { key: 'last2', label: t('เลขท้าย 2 ตัว'), size: 2, placeholder: '21' },
+  { key: 'last2', label: t('last_two_digits'), size: 2, placeholder: '21' },
 ];
 export function DataManager({
   action,
@@ -78,8 +78,8 @@ export function DataManager({
       const value = values[field.key] ?? '';
       if (field.size ? !new RegExp(`^\\d{${field.size}}$`).test(value) : !value)
         nextErrors[field.key] = field.size
-          ? t('กรอกตัวเลขให้ครบ {0} หลัก', [field.size])
-          : t('เลือกวันที่ออกรางวัล');
+          ? t('enter_exactly_digits', [field.size])
+          : t('choose_a_draw_date');
     }
     if (!Object.keys(nextErrors).length) {
       let draw: Draw | undefined;
@@ -98,13 +98,13 @@ export function DataManager({
       if (draw) {
         if (draws.some((d) => d.date === draw.date))
           nextErrors.date = t(
-            'มีงวดนี้อยู่แล้ว หากต้องการแก้ไข ให้นำเข้า JSON และตรวจสอบก่อนแทนที่',
+            'this_draw_already_exists_to_edit',
           );
         else {
           try {
             save([draw]);
             onSuccess(
-              t('เพิ่มผลสลากงวด {0} แล้ว', [formatDate(draw.date, true)]),
+              t('draw_added', [formatDate(draw.date, true)]),
               true,
             );
             return;
@@ -128,7 +128,7 @@ export function DataManager({
       !file.size ||
       file.size > 5 * 1024 * 1024
     ) {
-      setError(t('เลือกไฟล์ .json ขนาดไม่เกิน 5 MB และต้องไม่เป็นไฟล์ว่าง'));
+      setError(t('choose_a_non_empty_json_file'));
       return;
     }
     setBusy(true);
@@ -138,7 +138,7 @@ export function DataManager({
       setError(
         err instanceof SyntaxError
           ? t(
-              'ไฟล์ JSON ไม่ถูกต้อง ตรวจสอบเครื่องหมายและโครงสร้าง array แล้วลองใหม่',
+              'invalid_json_check_the_syntax_and',
             )
           : (err as Error).message,
       );
@@ -159,7 +159,7 @@ export function DataManager({
         true,
       );
       onSuccess(
-        t('นำเข้า JSON แล้ว · เพิ่ม {0} งวด อัปเดต {1} งวด', [
+        t('json_imported_added_updated', [
           additions.length,
           changes.length,
         ]),
@@ -170,18 +170,18 @@ export function DataManager({
     }
   }
   const titles = {
-    add: t('เพิ่มผลสลากงวดใหม่'),
-    import: t('นำเข้าข้อมูล JSON'),
+    add: t('add_a_draw'),
+    import: t('import_json_data'),
   };
   return (
     <Modal
-      title={discard ? t('ยังมีข้อมูลที่ไม่ได้บันทึก') : titles[action]}
+      title={discard ? t('you_have_unsaved_changes') : titles[action]}
       description={
         discard
-          ? t('หากปิดหน้าต่าง ข้อมูลที่กำลังกรอกจะไม่ถูกบันทึก')
+          ? t('closing_this_window_will_discard_your')
           : action === 'add'
-            ? t('กรอกผลรางวัลครบทุกช่อง เลขศูนย์นำหน้าจะถูกเก็บไว้')
-            : t('ตรวจสอบข้อมูลก่อนบันทึก ไฟล์ .json ไม่เกิน 5 MB')
+            ? t('complete_every_award_field_leading_zeros')
+            : t('review_data_before_saving_json_files')
       }
       onClose={close}
       busy={busy}
@@ -189,10 +189,10 @@ export function DataManager({
       {discard ? (
         <div className="modal-actions">
           <button className="button" onClick={() => setDiscard(false)}>
-            {tx('กลับไปกรอกต่อ')}
+            {tx('continue_editing')}
           </button>
           <button className="button button-danger" onClick={onClose}>
-            {tx('ปิดโดยไม่บันทึก')}
+            {tx('discard_and_close')}
           </button>
         </div>
       ) : (
@@ -240,10 +240,10 @@ export function DataManager({
               </p>
               <div className="modal-actions">
                 <button type="button" className="button" onClick={close}>
-                  {tx('ยกเลิก')}
+                  {tx('cancel')}
                 </button>
                 <button className="button button-primary" type="submit">
-                  {tx('บันทึกผลสลาก')}
+                  {tx('save_draw')}
                 </button>
               </div>
             </form>
@@ -252,8 +252,8 @@ export function DataManager({
             <>
               <div className="upload-box">
                 <FileJson size={32} />
-                <strong>{tx('เลือกไฟล์สำรองผลสลาก')}</strong>
-                <p>{tx('ใช้รูปแบบเดียวกับไฟล์ที่ส่งออกจาก LottoCube')}</p>
+                <strong>{tx('choose_a_results_backup')}</strong>
+                <p>{tx('use_the_same_format_as_an')}</p>
                 <input
                   ref={fileRef}
                   type="file"
@@ -271,7 +271,7 @@ export function DataManager({
                   onClick={() => fileRef.current?.click()}
                 >
                   <Upload size={16} />
-                  {busy ? t('กำลังอ่านไฟล์...') : t('เลือกไฟล์ JSON')}
+                  {busy ? t('reading_file') : t('choose_json_file')}
                 </button>
                 {fileName && <span className="file-name">{fileName}</span>}
               </div>
@@ -279,33 +279,33 @@ export function DataManager({
                 <div className="import-preview">
                   <h3>
                     <Check size={18} />
-                    {tx('ตรวจรูปแบบผ่าน ·')}
+                    {tx('validated')}
                     {incoming.length}
-                    {tx('งวด')}
+                    {tx('draws')}
                   </h3>
                   <p>
-                    {tx('เพิ่มใหม่')}
+                    {tx('new')}
                     <b>{additions.length}</b>
-                    {tx('งวด · ผลรางวัลเปลี่ยน')} <b>{changes.length}</b>
-                    {tx('งวด · เหมือนเดิม')}{' '}
+                    {tx('draws_changed_results')} <b>{changes.length}</b>
+                    {tx('draws_unchanged')}{' '}
                     {incoming.length - additions.length - changes.length}
-                    {tx('งวด')}
+                    {tx('draws')}
                   </p>
                   <p>
-                    {tx('หลังบันทึกจะมี')}
+                    {tx('after_saving')}
                     {mergeDraws(draws, incoming, true).length}{' '}
-                    {tx('งวด ข้อมูลวันที่อื่นยังอยู่ครบ')}
+                    {tx('draws_other_dates_remain_unchanged')}
                   </p>
                   {changes.length > 0 && (
                     <div className="warning-box">
-                      {tx('ผลเดิมจะถูกแทนที่ในงวด:')}{' '}
+                      {tx('these_draws_will_be_replaced')}{' '}
                       {changes
                         .slice(0, 5)
                         .map((d) => formatDate(d.date, true))
                         .join(', ')}
                       {changes.length > 5 &&
-                        t('และอีก {0} งวด', [changes.length - 5])}{' '}
-                      {tx('· ส่งออกข้อมูลเดิมก่อนหากต้องการสำรอง')}
+                        t('and_more_draws', [changes.length - 5])}{' '}
+                      {tx('export_the_current_data_first_if')}
                     </div>
                   )}
                 </div>
@@ -315,7 +315,7 @@ export function DataManager({
               </p>
               <div className="modal-actions">
                 <button className="button" disabled={busy} onClick={onClose}>
-                  {tx('ยกเลิก')}
+                  {tx('cancel')}
                 </button>
                 <button
                   className="button button-primary"
@@ -323,8 +323,8 @@ export function DataManager({
                   onClick={commitImport}
                 >
                   {changes.length
-                    ? t('นำเข้าและแทนที่งวดที่เปลี่ยน')
-                    : t('บันทึกข้อมูลที่นำเข้า')}
+                    ? t('import_and_replace_changed_draws')
+                    : t('save_imported_data')}
                 </button>
               </div>
             </>

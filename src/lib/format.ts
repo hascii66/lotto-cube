@@ -13,13 +13,13 @@ export const formatNumber = (number: number) =>
 export const percent = (count: number, total: number) =>
   total ? (count / total) * 100 : 0;
 export const weekdays = () => [
-  t('อาทิตย์'),
-  t('จันทร์'),
-  t('อังคาร'),
-  t('พุธ'),
-  t('พฤหัสบดี'),
-  t('ศุกร์'),
-  t('เสาร์'),
+  t('sunday'),
+  t('monday'),
+  t('tuesday'),
+  t('wednesday'),
+  t('thursday'),
+  t('friday'),
+  t('saturday'),
 ];
 export const weekdayOf = (date: string) =>
   new Date(`${date}T00:00:00Z`).getUTCDay();

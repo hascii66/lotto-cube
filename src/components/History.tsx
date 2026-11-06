@@ -42,19 +42,19 @@ export function History({
   const start = (current - 1) * 10;
   const sources = {
     sanook: 'Sanook',
-    seed: t('ข้อมูลตั้งต้น'),
+    seed: t('original_dataset'),
     api: 'Rayriffy API',
-    manual: t('เพิ่มเอง'),
-    import: t('นำเข้า JSON'),
+    manual: t('added_manually'),
+    import: t('import_json'),
   };
   return (
     <Panel
-      title={t('ผลสลากย้อนหลัง')}
+      title={t('historical_draws')}
       eyebrow="DRAW ARCHIVE"
       aside={
         <button className="button button-small" onClick={onAdd}>
           <Plus size={15} />
-          {tx('เพิ่มงวด')}
+          {tx('add_draw')}
         </button>
       }
     >
@@ -65,12 +65,12 @@ export function History({
           onClick={() => exportJson(draws)}
         >
           <Download size={15} />
-          {tx('ส่งออกทั้งหมด')}
+          {tx('export_all')}
         </button>
       </div>
       <p className="table-summary" aria-live="polite">
         {t(
-          'พบ {0} งวดจากฐานข้อมูลทั้งหมด {1} งวด · ค้นหาได้ทุกรางวัล',
+          'found_of_draws_in_the_archive',
           [matching.length, draws.length],
         )}
       </p>
@@ -78,20 +78,20 @@ export function History({
         className="table-scroll"
         tabIndex={0}
         role="region"
-        aria-label={t('ตารางผลสลาก เลื่อนแนวนอนเพื่อดูทุกรางวัล')}
+        aria-label={t('results_table_scroll_horizontally_to_see')}
       >
         <table>
           <caption className="sr-only">
-            {tx('ผลสลากกินแบ่งรัฐบาลย้อนหลัง')}
+            {tx('historical_thai_government_lottery_results')}
           </caption>
           <thead>
             <tr>
-              <th scope="col">{tx('วันที่ออกรางวัล')}</th>
-              <th scope="col">{tx('รางวัลที่ 1')}</th>
-              <th scope="col">{tx('เลขหน้า 3 ตัว')}</th>
-              <th scope="col">{tx('เลขท้าย 3 ตัว')}</th>
-              <th scope="col">{tx('ท้าย 2 ตัว')}</th>
-              <th scope="col">{tx('แหล่งข้อมูล')}</th>
+              <th scope="col">{tx('draw_date')}</th>
+              <th scope="col">{tx('first_prize')}</th>
+              <th scope="col">{tx('front_3_digits')}</th>
+              <th scope="col">{tx('last_three_digits')}</th>
+              <th scope="col">{tx('last_two_number')}</th>
+              <th scope="col">{tx('source')}</th>
             </tr>
           </thead>
           <tbody>
@@ -133,9 +133,9 @@ export function History({
         </table>
         {!matching.length && (
           <Empty>
-            {tx('ไม่พบเลข “')}
+            {tx('no_matches_for')}
             {query}
-            {tx('” ลองค้นหาเลขอื่น หรือล้างคำค้นหาเพื่อดูทั้งหมด')}
+            {tx('try_another_number_or_clear_the')}
           </Empty>
         )}
       </div>
@@ -144,25 +144,25 @@ export function History({
           {matching.length
             ? `${start + 1}–${Math.min(start + 10, matching.length)}`
             : '0'}{' '}
-          {tx('จาก')}
+          {tx('of')}
           {matching.length}
-          {tx('งวด')}
+          {tx('draws')}
         </span>
         <div>
           <button
             className="icon-button"
-            aria-label={t('หน้าก่อนหน้า')}
+            aria-label={t('previous_page')}
             disabled={current === 1}
             onClick={() => onPage(current - 1)}
           >
             <ChevronLeft size={18} />
           </button>
           <span>
-            {t('หน้า {0} / {1}', [current, totalPages])}
+            {t('page_2', [current, totalPages])}
           </span>
           <button
             className="icon-button"
-            aria-label={t('หน้าถัดไป')}
+            aria-label={t('next_page')}
             disabled={current >= totalPages}
             onClick={() => onPage(current + 1)}
           >

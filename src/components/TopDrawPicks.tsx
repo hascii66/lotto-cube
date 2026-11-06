@@ -89,15 +89,15 @@ export function TopDrawPicks({
             >
               <option value="next">
                 {draws[0]
-                  ? t('ถัดไป · {0} งวด · {1}', [
+                  ? t('next_draws', [
                       formatNumber(draws.length),
                       formatDate(draws[0].date, true),
                     ])
-                  : t('งวดถัดไป · ใช้ข้อมูลล่าสุด')}
+                  : t('next_draw_use_latest_history')}
               </option>
               {past && !target && (
                 <option value={targetDate} disabled>
-                  {t('ไม่พบงวด {0}', [targetDate])}
+                  {t('draw_not_found', [targetDate])}
                 </option>
               )}
               {dates.map((date) => (
@@ -110,11 +110,11 @@ export function TopDrawPicks({
         </label>
         <p aria-live="polite">
           {past
-            ? t('ใช้ข้อมูลก่อนงวดที่เลือก {0} งวด · ข้อมูลถึง {1}', [
+            ? t('based_on_earlier_draws_history_through', [
                 formatNumber(history.length),
                 cutoff ? formatDate(cutoff, true) : '—',
               ])
-            : t('จากฐานข้อมูลทั้งหมด {0} งวด · จัดอันดับตามคะแนนย้อนหลัง', [
+            : t('across_all_stored_draws_ranked_by', [
                 formatNumber(draws.length),
               ])}
         </p>
@@ -143,23 +143,23 @@ export function TopDrawPicks({
       <p className="pick-score-note">
         <Info size={22} aria-hidden="true" />
         {digits === '2' && leadingPick
-          ? t('เลข {0} เด่นจากความถี่แยกหลัก ไม่ใช่สถิติเลขคู่ · ไม่ถ่วงวัน', [
+          ? t('ranks_by_per_digit_frequency_not', [
               leadingPick,
             ])
           : past
-            ? t('{0} งวดก่อนวันเลือก · คะแนนไม่ใช่โอกาสถูกรางวัล', [
+            ? t('earlier_draws_score_is_not_winning', [
                 formatNumber(history.length),
               ])
-            : t('ความถี่แยกหลัก · คะแนนไม่ใช่โอกาสถูกรางวัล')}
+            : t('frequency_by_digit_score_not_odds')}
       </p>
-      <nav className="wayfinding" aria-label={t('ทางลัดไปยังส่วนต่าง ๆ')}>
+      <nav className="wayfinding" aria-label={t('quick_links_to_analysis_sections')}>
         {(
           [
-            { view: 'overview', label: t('เลขคัด'), detail: t('เริ่มต้น') },
-            { view: 'three', label: t('3 ตัว'), detail: '' },
-            { view: 'two', label: t('2 ตัว'), detail: '' },
-            { view: 'scorer', label: t('เช็กเลข'), detail: '' },
-            { view: 'history', label: t('ย้อนหลัง'), detail: t('ปลายทาง') },
+            { view: 'overview', label: t('picks'), detail: t('start') },
+            { view: 'three', label: t('three_digits'), detail: '' },
+            { view: 'two', label: t('two_digits'), detail: '' },
+            { view: 'scorer', label: t('check_numbers'), detail: '' },
+            { view: 'history', label: t('archive'), detail: t('destination') },
           ] as const
         ).map(({ view, label, detail }, index) => (
           <a
@@ -181,12 +181,12 @@ export function TopDrawPicks({
       {past && (
         <p className="pick-backtest-note">
           {t(
-            'คำนวณย้อนหลังด้วยสูตรปัจจุบันและข้อมูลในคลัง ใช้เฉพาะงวดก่อนวันที่เลือก ไม่ใช่บันทึกเลขคัดที่เผยแพร่ไว้ในวันนั้น',
+            'reconstructed_with_today_s_formula_and',
           )}
         </p>
       )}
       {past && !target ? (
-        <Empty>{t('ไม่พบงวดที่เลือกในคลัง กรุณาเลือกงวดอื่น')}</Empty>
+        <Empty>{t('this_draw_is_not_in_the')}</Empty>
       ) : (
         <div className="top-last-panels">
           {groups
@@ -198,29 +198,29 @@ export function TopDrawPicks({
                   className={`top-last-card${digits === 6 ? ' top-last-six' : ''}`}
                   title={label(digits)}
                   aside={
-                    <span className="mini-tag">{t('ดัชนีย้อนหลัง / 100')}</span>
+                    <span className="mini-tag">{t('historical_index_100')}</span>
                   }
                 >
                   {target && (
                     <div className="pick-comparison">
                       <span>
-                        {t('ผลจริง')}{' '}
+                        {t('actual_result')}{' '}
                         <strong className="mono">{actual.join(' · ')}</strong>
                       </span>
                       <span>
                         {history.length
-                          ? t('ตรง Top 10 จำนวน {0}/{1} ชุด', [
+                          ? t('top_10_matches_awards', [
                               matched.length,
                               actual.length,
                             ])
-                          : t('ไม่มีข้อมูลก่อนงวดนี้สำหรับประเมิน')}
+                          : t('no_earlier_history_to_evaluate')}
                       </span>
                     </div>
                   )}
                   {picks.length ? (
                     <ol
                       className="top-last-grid"
-                      aria-label={t('10 เลขคัด · {0}', [label(digits)])}
+                      aria-label={t('10_picks', [label(digits)])}
                     >
                       {picks.map(({ number, score }, index) => (
                         <li key={number}>
@@ -228,14 +228,14 @@ export function TopDrawPicks({
                             className={`top-last-number ${index === 0 ? 'top-last-leader' : ''}${matched.includes(number) ? ' top-last-match' : ''}`}
                             onClick={() => setSelected({ number, digits })}
                             aria-label={
-                              t('อันดับ {0} {1} เลข {2} คะแนน {3} ดูประวัติ', [
+                              t('rank_number_score_view_history', [
                                 index + 1,
                                 label(digits),
                                 number,
                                 formatNumber(Math.round(score * 10) / 10),
                               ]) +
                               (matched.includes(number)
-                                ? ` · ${t('ตรงผลจริง')}`
+                                ? ` · ${t('matches_actual_result')}`
                                 : '')
                             }
                           >
@@ -247,7 +247,7 @@ export function TopDrawPicks({
                                 <Check
                                   size={12}
                                   className="pick-match-icon"
-                                  aria-label={t('ตรงผลจริง')}
+                                  aria-label={t('matches_actual_result')}
                                 />
                               ) : (
                                 <ArrowUpRight size={12} aria-hidden="true" />
@@ -256,7 +256,7 @@ export function TopDrawPicks({
                             <strong className="mono">{number}</strong>
                             <span className="top-last-score-wrap">
                               <span className="top-last-count-label">
-                                {t('คะแนน')}
+                                {t('score')}
                               </span>
                               <span className="top-last-count">
                                 {formatNumber(Math.round(score * 10) / 10)}
@@ -270,10 +270,10 @@ export function TopDrawPicks({
                     <Empty>
                       {past
                         ? t(
-                            'ไม่มีข้อมูลก่อนงวดนี้สำหรับคัดเลข ลองเลือกงวดที่ใหม่กว่า',
+                            'no_earlier_history_to_score_choose',
                           )
                         : t(
-                            'ยังไม่มีข้อมูลสำหรับคัดเลข เพิ่มหรือนำเข้าผลสลากในฐานข้อมูล',
+                            'no_history_to_score_yet_add',
                           )}
                     </Empty>
                   )}
@@ -285,17 +285,17 @@ export function TopDrawPicks({
       <Formula nextDraw />
       <p className="top-last-footnote">
         {t(
-          'คะแนนไม่ใช่เปอร์เซ็นต์โอกาสถูกรางวัลและไม่รับประกันผล · แตะเลขเพื่อดูประวัติรางวัลประเภทนั้น',
+          'score_note_disclaimer',
         )}
       </p>
       {selected && (
         <Modal
-          title={t('ประวัติ {0} · {1}', [
+          title={t('history', [
             label(selected.digits),
             selected.number,
           ])}
           description={t(
-            'พบ {0} ครั้งจากข้อมูลที่ใช้คำนวณ {1} งวด · นับเฉพาะรางวัลประเภทนี้',
+            'occurrences_across_the_draws_used_for',
             [hits.length, formatNumber(history.length)],
           )}
           onClose={() => setSelected(null)}
@@ -313,13 +313,13 @@ export function TopDrawPicks({
           ) : (
             <Empty>
               {t(
-                'ยังไม่เคยพบเลขนี้ในรางวัลประเภทนี้ · คะแนนคำนวณจากความถี่รายหลัก',
+                'no_exact_match_in_this_award',
               )}
             </Empty>
           )}
           <div className="modal-actions">
             <button className="button" onClick={() => setSelected(null)}>
-              {t('ปิด')}
+              {t('close')}
             </button>
           </div>
         </Modal>

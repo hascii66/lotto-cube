@@ -24,18 +24,18 @@ export function LatestDraw({
 }) {
   return (
     <div className="latest-row">
-      <section className="draw-ticket" aria-label={t('งวดล่าสุดในฐานข้อมูล')}>
+      <section className="draw-ticket" aria-label={t('latest_stored_draw')}>
         <div className="ticket-main">
           <div className="ticket-heading">
             <span>
               <i />
-              {tx('งวดล่าสุดในฐานข้อมูล')}
+              {tx('latest_stored_draw')}
             </span>
             <time dateTime={draw.date}>{formatDate(draw.date)}</time>
           </div>
           <div className="ticket-prize">
             <div>
-              <span className="ticket-label">{tx('รางวัลที่ 1')}</span>
+              <span className="ticket-label">{tx('first_prize')}</span>
               <div className="prize-digits mono">
                 {[...draw.prize1].map((digit, i) => (
                   <span key={i}>{digit}</span>
@@ -43,7 +43,7 @@ export function LatestDraw({
               </div>
             </div>
             <div className="ticket-last">
-              <span className="ticket-label">{tx('เลขท้าย 2 ตัว')}</span>
+              <span className="ticket-label">{tx('last_two_digits')}</span>
               <strong className="mono">{draw.last2}</strong>
             </div>
           </div>
@@ -51,7 +51,7 @@ export function LatestDraw({
             <span>GOVERNMENT LOTTERY / THAILAND</span>
             <button
               onClick={onHistory}
-              aria-label={t('ดูผลสลากย้อนหลังทั้งหมด')}
+              aria-label={t('view_all_historical_draws')}
             >
               <ArrowUpRight size={19} />
             </button>
@@ -59,34 +59,34 @@ export function LatestDraw({
         </div>
         <div className="ticket-stub">
           <div>
-            <span>{tx('เลขหน้า 3 ตัว')}</span>
+            <span>{tx('front_3_digits')}</span>
             <strong className="mono">{draw.front3.join(' · ')}</strong>
           </div>
           <div>
-            <span>{tx('เลขท้าย 3 ตัว')}</span>
+            <span>{tx('last_three_digits')}</span>
             <strong className="mono">{draw.back3.join(' · ')}</strong>
           </div>
           <div className="stub-lines" aria-hidden="true" />
         </div>
       </section>
       <section className="context-card">
-        <span className="eyebrow">{tx('รู้ที่มาของตัวเลข')}</span>
+        <span className="eyebrow">{tx('know_your_numbers')}</span>
         <h2>
-          {tx('อ่านอดีต')}
+          {tx('read_the_past')}
           <br />
-          {tx('ให้เห็นภาพชัดขึ้น')}
+          {tx('see_more_clearly')}
           <span>.</span>
         </h2>
         <p>
-          {tx('เริ่มจากข้อมูล')}
+          {tx('start_with')}
           {formatNumber(total)}
-          {tx('งวดในคลัง')}
+          {tx('stored_draws_2')}
           <br />
-          {tx('สำรวจรูปแบบด้วยสถิติที่ตรวจสอบได้')}
+          {tx('explore_patterns_with_transparent_statistics')}
         </p>
         <span className="automatic-label">
           <ShieldCheck size={15} />
-          {tx('อัปเดตงวดใหม่อัตโนมัติ')}
+          {tx('new_draws_update_automatically')}
         </span>
       </section>
     </div>
@@ -103,37 +103,37 @@ export function Metrics({
   const sumMax = Math.max(...stats.sums);
   const items = [
     {
-      label: t('งวดที่นำมาวิเคราะห์'),
+      label: t('draws_analyzed'),
       value: formatNumber(draws.length),
-      unit: t('งวด'),
+      unit: t('draws'),
       note: draws.length
         ? `${formatDate(draws[draws.length - 1].date, true)} – ${formatDate(draws[0].date, true)}`
-        : t('ไม่มีงวดในช่วงที่เลือก'),
+        : t('no_draws_in_this_period'),
       icon: Database,
     },
     {
-      label: t('เลข 3 ตัวในชุดข้อมูล'),
+      label: t('three_digit_samples'),
       value: formatNumber(stats.total),
-      unit: t('ชุด'),
-      note: t('นับตามประเภทรางวัลที่เลือก'),
+      unit: t('samples'),
+      note: t('based_on_the_selected_award_type'),
       icon: Layers3,
     },
     {
-      label: t('เลข 3 ตัวที่ไม่ซ้ำกัน'),
+      label: t('distinct_three_digit_numbers'),
       value: formatNumber(unique),
-      unit: t('เลข'),
-      note: t('จากเลขที่เป็นไปได้ 1,000 ชุด'),
+      unit: t('numbers'),
+      note: t('out_of_1_000_possible_numbers'),
       icon: ChartNoAxesCombined,
     },
     {
-      label: t('แต้มรวมที่พบบ่อยที่สุด'),
+      label: t('most_frequent_digit_sum_2'),
       value: stats.total
         ? String(stats.sums.indexOf(sumMax)).padStart(2, '0')
         : '—',
-      unit: t('แต้ม'),
+      unit: t('points'),
       note: stats.total
-        ? t('พบ {0} ครั้งในช่วงที่เลือก', [sumMax])
-        : t('ไม่มีข้อมูลสำหรับคำนวณ'),
+        ? t('found_times_in_this_period', [sumMax])
+        : t('no_data_to_calculate'),
       icon: Sigma,
     },
   ];
@@ -171,13 +171,13 @@ export function ThreeAnalytics({
         <SumChart stats={stats} />
       </div>
       <Panel
-        title={t('10 เลขที่สอดคล้องกับสถิติ')}
+        title={t('10_numbers_aligned_with_the_data')}
         eyebrow="STATISTICAL SHORTLIST"
-        aside={<span className="mini-tag">{tx('ดัชนีย้อนหลัง / 100')}</span>}
+        aside={<span className="mini-tag">{tx('historical_index_100')}</span>}
       >
         <p className="section-description">
           {tx(
-            'จัดอันดับจากความถี่รายหลัก แต้มรวม และโครงสร้างเลขในช่วงที่เลือก · คลิกเพื่อตรวจรายละเอียด',
+            'ranked_by_position_frequency_digit_sum',
           )}
         </p>
         <div className="picks-grid">
@@ -186,7 +186,7 @@ export function ThreeAnalytics({
               className="pick"
               key={pick.number}
               onClick={() => onScore(pick.number)}
-              aria-label={t('ตรวจเลข {0} คะแนนจัดอันดับ {1}', [
+              aria-label={t('explore_ranking_score', [
                 pick.number,
                 pick.score.toFixed(1),
               ])}
@@ -198,7 +198,7 @@ export function ThreeAnalytics({
               <ArrowUpRight size={16} />
               <span className="pick-score mono">
                 {pick.score.toFixed(1)}
-                <small>{tx('คะแนน')}</small>
+                <small>{tx('score')}</small>
               </span>
             </button>
           ))}
@@ -206,9 +206,9 @@ export function ThreeAnalytics({
         <Formula picks />
         <div className="shortlist-note">
           <span>
-            {tx('คะแนนสูงสะท้อนความถี่ในอดีต ไม่ใช่โอกาสถูกรางวัลครั้งถัดไป')}
+            {tx('higher_scores_reflect_past_frequencies_not')}
           </span>
-          <TextLink onClick={() => onScore('')}>{tx('ตรวจเลขของคุณ')}</TextLink>
+          <TextLink onClick={() => onScore('')}>{tx('explore_your_numbers')}</TextLink>
         </div>
       </Panel>
     </>

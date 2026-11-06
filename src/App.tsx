@@ -42,21 +42,21 @@ import { History } from './components/History';
 import { Empty, Formula, Panel } from './components/ui';
 import { Preferences, usePreferences } from './components/Preferences';
 const getNavigation = () => [
-  { view: 'overview' as const, label: t('เลขคัด'), icon: LayoutDashboard },
+  { view: 'overview' as const, label: t('picks'), icon: LayoutDashboard },
   {
     view: 'three' as const,
-    label: t('วิเคราะห์เลข 3 ตัว'),
+    label: t('analyze_three_digits'),
     icon: ChartColumn,
     badge: '3D',
   },
   {
     view: 'two' as const,
-    label: t('วิเคราะห์เลข 2 ตัว'),
+    label: t('analyze_two_digits'),
     icon: Grid2X2,
     badge: '2D',
   },
-  { view: 'scorer' as const, label: t('ตรวจคะแนนเลข'), icon: SearchCheck },
-  { view: 'history' as const, label: t('ฐานข้อมูลย้อนหลัง'), icon: Database },
+  { view: 'scorer' as const, label: t('score_a_number'), icon: SearchCheck },
+  { view: 'history' as const, label: t('historical_database'), icon: Database },
 ];
 const getPageContent = (): Record<
   View,
@@ -67,35 +67,35 @@ const getPageContent = (): Record<
   }
 > => ({
   overview: {
-    title: t('เลขคัดและผลย้อนหลัง'),
-    description: t('เลือกเลขที่สนใจ แล้วแตะเพื่อดูประวัติ'),
+    title: t('picks_and_past_results'),
+    description: t('choose_number_explore_history'),
     eyebrow: 'LOTTOCUBE',
   },
   three: {
-    title: t('มองให้ลึก ครบทั้ง 3 หลัก'),
+    title: t('a_closer_look_at_all_three'),
     description: t(
-      'ความถี่รายหลัก โครงสร้างเลข และแต้มรวม จากผลรางวัลที่บันทึกไว้',
+      'position_frequencies_number_patterns_and_digit',
     ),
     eyebrow: '3-DIGIT ANALYTICS',
   },
   two: {
-    title: t('100 ตัวเลข ในภาพเดียว'),
-    description: t('สำรวจเลขท้าย 2 ตัวผ่านแผนที่ความถี่และสถิติแยกรายหลัก'),
+    title: t('one_hundred_numbers_one_clear_view'),
+    description: t('explore_two_digit_results_through_a'),
     eyebrow: '2-DIGIT ANALYTICS',
   },
   scorer: {
-    title: t('เลขที่สนใจ บอกอะไรได้บ้าง'),
-    description: t('ตรวจคะแนนจากสถิติ พร้อมย้อนดูประวัติเลขตรงและเลขกลับ'),
+    title: t('put_your_numbers_in_context'),
+    description: t('compare_historical_scores_and_explore_exact'),
     eyebrow: 'YOUR NUMBER, IN CONTEXT',
   },
   history: {
-    title: t('ข้อมูลจริง จุดเริ่มต้นของสถิติ'),
-    description: t('ค้นหา ตรวจสอบ และจัดการผลรางวัลย้อนหลังในคลังของคุณ'),
+    title: t('good_statistics_start_with_real_data'),
+    description: t('search_review_and_manage_your_historical'),
     eyebrow: 'THE DRAW ARCHIVE',
   },
   guide: {
-    title: t('เข้าใจตัวเลข ก่อนตีความ'),
-    description: t('ที่มาของข้อมูล วิธีคำนวณ และขอบเขตของสถิติย้อนหลัง'),
+    title: t('understand_the_numbers_first'),
+    description: t('data_sources_transparent_formulas_and_the'),
     eyebrow: 'ABOUT LOTTOCUBE',
   },
 });
@@ -200,14 +200,14 @@ export default function App() {
   return (
     <div className={`app-shell${state.view === 'overview' ? ' app-home' : ''}`}>
       <a className="skip-link" href="#main-content">
-        {tx('ข้ามไปยังเนื้อหาหลัก')}
+        {tx('skip_to_main_content')}
       </a>
       <aside
         id="main-navigation"
         ref={sidebarRef}
         inert={narrow && !mobileNav}
         className={`sidebar ${mobileNav ? 'sidebar-open' : ''}`}
-        aria-label={t('เมนูหลัก')}
+        aria-label={t('main_navigation')}
       >
         <a
           className="brand"
@@ -232,7 +232,7 @@ export default function App() {
         <button
           className="icon-button mobile-close"
           onClick={() => setMobileNav(false)}
-          aria-label={t('ปิดเมนู')}
+          aria-label={t('close_navigation')}
         >
           <X size={20} />
         </button>
@@ -242,7 +242,7 @@ export default function App() {
           <span className="mini-version">V.0.1</span>
         </div>
         {narrow && <Preferences />}
-        <p className="nav-label">{tx('สำรวจข้อมูล')}</p>
+        <p className="nav-label">{tx('explore')}</p>
         <nav>
           {navigation.map(({ view, label, icon: Icon, badge }) => (
             <a
@@ -264,37 +264,37 @@ export default function App() {
         <div className="sidebar-divider" />
         {showSidebarTools && (
           <>
-            <p className="nav-label">{tx('คลังข้อมูล')}</p>
+            <p className="nav-label">{tx('data_library')}</p>
             <div className="data-tools">
               <button onClick={() => setDataAction('add')}>
                 <Plus size={18} />
-                {tx('เพิ่มผลสลากงวดใหม่')}
+                {tx('add_a_draw')}
               </button>
               <button onClick={() => setDataAction('import')}>
                 <FileUp size={18} />
-                {tx('นำเข้า JSON')}
+                {tx('import_json')}
               </button>
               <button
                 onClick={() => {
                   exportJson(draws);
-                  setToast(t('ส่งออกไฟล์ JSON แล้ว'));
+                  setToast(t('json_exported'));
                 }}
               >
                 <ArrowDownToLine size={18} />
-                {tx('ส่งออกข้อมูล')}
+                {tx('export_data')}
               </button>
             </div>
             <div className="sidebar-bottom">
               <div className="workspace-note">
                 <FlaskConical size={21} />
-                <strong>{tx('ข้อมูลจริง สูตรโปร่งใส')}</strong>
+                <strong>{tx('real_data_open_formulas')}</strong>
                 <p>
-                  {tx('สำรวจสิ่งที่เกิดขึ้นแล้ว')}
+                  {tx('explore_what_happened')}
                   <br />
-                  {tx('ด้วยความเข้าใจที่มากขึ้น')}
+                  {tx('with_a_clearer_understanding')}
                 </p>
                 <button onClick={() => navigate('guide')}>
-                  {tx('รู้จักวิธีอ่านสถิติ')}
+                  {tx('how_to_read_the_statistics')}
                   <ArrowUpRight size={15} />
                 </button>
               </div>
@@ -308,11 +308,11 @@ export default function App() {
                 aria-current={state.view === 'guide' ? 'page' : undefined}
               >
                 <CircleHelp size={18} />
-                {tx('คู่มือและที่มาข้อมูล')} <ArrowUpRight size={14} />
+                {tx('guide_data_sources')} <ArrowUpRight size={14} />
               </a>
               <div className="local-status">
                 <span className="status-dot" />
-                {tx('บันทึกบนอุปกรณ์นี้')} <ShieldCheck size={15} />
+                {tx('saved_on_this_device')} <ShieldCheck size={15} />
               </div>
             </div>
           </>
@@ -321,7 +321,7 @@ export default function App() {
       {mobileNav && (
         <button
           className="nav-scrim"
-          aria-label={t('ปิดเมนูหลัก')}
+          aria-label={t('close_main_navigation')}
           onClick={() => setMobileNav(false)}
         />
       )}
@@ -347,11 +347,11 @@ export default function App() {
                 Lotto<span>Cube</span>
               </span>
             </a>
-            <span className="desktop-breadcrumb">{tx('ห้องแล็บ')}</span>
+            <span className="desktop-breadcrumb">{tx('workspace')}</span>
             <span className="breadcrumb-slash">/</span>
             <span>
               {state.view === 'guide'
-                ? t('คู่มือและที่มาข้อมูล')
+                ? t('guide_data_sources')
                 : navigation.find((n) => n.view === state.view)?.label}
             </span>
           </div>
@@ -359,18 +359,18 @@ export default function App() {
             <span className="database-pill">
               <i />{' '}
               {['overview', 'history', 'guide'].includes(state.view)
-                ? t('{0} งวดในคลัง', [draws.length])
-                : t('{0} งวดที่วิเคราะห์', [filtered.length])}
+                ? t('stored_draws', [draws.length])
+                : t('analyzed_draws', [filtered.length])}
             </span>
             <span className="latest-date">
-              {tx('งวดล่าสุด')}
+              {tx('latest_draw')}
               <b>{latest ? formatDate(latest.date, true) : '—'}</b>
             </span>
           </div>
           {narrow ? (
             <button
               className="icon-button search-button"
-              aria-label={t('เช็กเลข')}
+              aria-label={t('check_numbers')}
               onClick={() => navigate('scorer')}
             >
               <Search size={24} />
@@ -381,7 +381,7 @@ export default function App() {
           <button
             ref={menuRef}
             className="icon-button menu-button"
-            aria-label={t('เปิดเมนูหลัก')}
+            aria-label={t('open_main_navigation')}
             aria-expanded={mobileNav}
             aria-controls="main-navigation"
             onClick={(event) => {
@@ -411,13 +411,13 @@ export default function App() {
             )}
             <span>
               {offline
-                ? t('ออฟไลน์ · ใช้ข้อมูลที่บันทึกไว้')
+                ? t('offline_using_saved_data')
                 : freshness === 'checking'
-                  ? t('กำลังตรวจสอบงวดล่าสุดอัตโนมัติ')
+                  ? t('checking_the_latest_published_draw_automatically')
                   : freshness === 'current'
-                    ? t('ข้อมูลครบถึงงวดที่ประกาศล่าสุด · ตรวจสอบอัตโนมัติ')
+                    ? t('complete_through_the_latest_published_draw')
                     : t(
-                        'ยังตรวจสอบงวดล่าสุดไม่ได้ · ใช้ข้อมูลที่บันทึกไว้และจะลองใหม่อัตโนมัติ',
+                        'latest_draw_unverified_using_saved_data',
                       )}
             </span>
           </div>
@@ -427,7 +427,7 @@ export default function App() {
                 <span>
                   <WifiOff size={17} />
                   {tx(
-                    'คุณออฟไลน์อยู่ ข้อมูลที่บันทึกไว้ยังวิเคราะห์ได้ จะตรวจสอบงวดล่าสุดเมื่อกลับมาออนไลน์',
+                    'you_are_offline_saved_data_remains',
                   )}
                 </span>
               )}
@@ -448,7 +448,7 @@ export default function App() {
             <details className="latest-peek">
               <summary>
                 <span>
-                  {t('ผลล่าสุดในคลัง')}{' '}
+                  {t('latest_stored_result')}{' '}
                   <time dateTime={latest.date}>
                     {formatDate(latest.date, true)}
                   </time>
@@ -467,11 +467,11 @@ export default function App() {
             <div className="filter-bar">
               <div className="filter-label">
                 <SlidersHorizontal size={17} />
-                <span>{tx('ช่วงที่วิเคราะห์')}</span>
+                <span>{tx('analysis_period')}</span>
               </div>
               <div className="filter-control">
                 <label htmlFor="filter-limit" className="sr-only">
-                  {tx('จำนวนงวด')}
+                  {tx('draw_count')}
                 </label>
                 <select
                   id="filter-limit"
@@ -481,18 +481,18 @@ export default function App() {
                   }
                 >
                   <option value="all">
-                    {tx('ทั้งหมด')}
+                    {tx('all')}
                     {draws.length}
-                    {tx('งวด')}
+                    {tx('draws')}
                   </option>
-                  <option value="20">{tx('20 งวดล่าสุด')}</option>
-                  <option value="10">{tx('10 งวดล่าสุด')}</option>
+                  <option value="20">{tx('latest_20_draws')}</option>
+                  <option value="10">{tx('latest_10_draws')}</option>
                 </select>
               </div>
               {state.view !== 'two' && (
                 <div className="filter-control filter-prize">
                   <label className="sr-only" htmlFor="filter-prize">
-                    {tx('ประเภทรางวัล')}
+                    {tx('award_type')}
                   </label>
                   <select
                     id="filter-prize"
@@ -511,14 +511,14 @@ export default function App() {
               )}
               <div className="filter-control">
                 <label htmlFor="filter-weekday" className="sr-only">
-                  {tx('วันออกรางวัล')}
+                  {tx('draw_weekday')}
                 </label>
                 <select
                   id="filter-weekday"
                   value={state.weekday}
                   onChange={(e) => update({ weekday: e.target.value })}
                 >
-                  <option value="all">{tx('ทุกวันในสัปดาห์')}</option>
+                  <option value="all">{tx('any_weekday')}</option>
                   {weekdays().map((day, i) => (
                     <option key={day} value={i}>
                       {getLanguage() === 'th' ? `วัน${day}` : day}
@@ -528,9 +528,9 @@ export default function App() {
               </div>
               <div className="filter-result">
                 <span className="status-dot" />
-                {tx('ใช้')}
+                {tx('using')}
                 {filtered.length}
-                {tx('งวด')}
+                {tx('draws')}
               </div>
             </div>
           )}
@@ -540,11 +540,11 @@ export default function App() {
               <div className="section-title">
                 <div>
                   <span className="section-symbol">3D</span>
-                  <h2>{tx('มองตัวเลขผ่านสถิติ')}</h2>
+                  <h2>{tx('see_the_numbers_through_statistics')}</h2>
                 </div>
                 <span>
                   <Activity size={14} />
-                  {tx('คำนวณจากข้อมูลในช่วงที่เลือก')}
+                  {tx('calculated_from_your_selected_period')}
                 </span>
               </div>
               {!filtered.length && <Empty />}
@@ -580,22 +580,22 @@ export default function App() {
           {state.view === 'guide' && (
             <div className="guide-grid">
               <Panel
-                title={t('เริ่มต้นจากข้อมูลที่ตรวจสอบได้')}
+                title={t('start_with_traceable_data')}
                 eyebrow="DATA PROVENANCE"
                 aside={<BookOpen size={22} />}
               >
                 <p>
                   {tx(
-                    'ใช้ข้อมูลจริงย้อนหลัง 10 ปีจากไฟล์ lotto-history.json ที่ดึงจาก Sanook แอปตรวจสอบงวดล่าสุดจากแหล่งข้อมูลเมื่อเปิดและกลับมาใช้งาน หากข้อมูลครบจะใช้ของเดิม หากมีงวดขาดจะเติมให้ครบโดยอัตโนมัติ',
+                    'the_app_uses_ten_years_of',
                   )}
                 </p>
                 <p>
                   {tx(
-                    'วันที่ “งวดล่าสุด” หมายถึงงวดใหม่ที่สุดในคลัง ดูสถานะการตรวจสอบควบคู่กัน หากออฟไลน์ยังวิเคราะห์ข้อมูลเดิมได้ และตรวจใหม่เมื่อออนไลน์',
+                    'latest_draw_means_the_newest_result',
                   )}
                 </p>
                 <p>
-                  {tx('ข้อมูลจาก')}{' '}
+                  {tx('results_from')}{' '}
                   <a
                     href="https://news.sanook.com/lotto/archive/"
                     target="_blank"
@@ -604,67 +604,67 @@ export default function App() {
                     Sanook archive <ArrowUpRight size={13} />
                   </a>{' '}
                   {tx(
-                    'ซึ่งเป็นบริการภายนอก หากใช้ตรวจรางวัล ควรตรวจซ้ำกับสำนักงานสลากกินแบ่งรัฐบาล',
+                    'an_external_source_always_verify_prize',
                   )}
                 </p>
                 <p>
                   {tx(
-                    'ฐานข้อมูลกลางเก็บบนเซิร์ฟเวอร์ ส่วนข้อมูลที่เพิ่มเองและการตั้งค่าเก็บบนอุปกรณ์ ไม่มีระบบบัญชี ส่งออก JSON เพื่อสำรองก่อนล้างข้อมูลเบราว์เซอร์',
+                    'the_server_maintains_the_shared_archive',
                   )}
                 </p>
               </Panel>
               <Panel
-                title={t('อ่านกราฟอย่างเข้าใจ')}
+                title={t('read_the_charts_with_confidence')}
                 eyebrow="READING THE NUMBERS"
               >
                 <ul className="reading-guide">
                   <li>
-                    <b>{tx('ความถี่รายหลัก')}</b>
+                    <b>{tx('frequency_by_position')}</b>
                     <span>
                       {tx(
-                        'นับเลข 0–9 ในแต่ละตำแหน่ง เส้นประคือค่าคาดหวัง 10% เลขที่ความถี่เท่ากันเรียงตามตัวเลข และไฮไลท์ 3 อันดับ',
+                        'digits_0_9_are_counted_in',
                       )}
                     </span>
                   </li>
                   <li>
-                    <b>{tx('โครงสร้างเลข')}</b>
+                    <b>{tx('number_patterns')}</b>
                     <span>
                       {tx(
-                        'จากเลข 000–999 มีเลขไม่ซ้ำ 72% เลขซ้ำ 2 หลัก 27% และเลขตอง 1% ป้ายความต่าง ≥10 จุดเป็นเพียงเกณฑ์แสดงผล ไม่ใช่การทดสอบนัยสำคัญ',
+                        'of_all_numbers_000_999_72',
                       )}
                     </span>
                   </li>
                   <li>
-                    <b>{tx('ต่ำ–สูง และคู่–คี่')}</b>
+                    <b>{tx('low_high_and_even_odd')}</b>
                     <span>
                       {tx(
-                        'เลขต่ำ 000–499 เลขสูง 500–999 ส่วนคู่–คี่ดูจากผลรวมเลขโดด ค่าทฤษฎีแต่ละกลุ่มคือ 50%',
+                        'low_means_000_499_and_high',
                       )}
                     </span>
                   </li>
                   <li>
-                    <b>{tx('กรองตามวัน')}</b>
+                    <b>{tx('filter_by_weekday')}</b>
                     <span>
                       {tx(
-                        'เลือกวันในสัปดาห์ก่อน แล้วจึงใช้จำนวนงวดล่าสุด ตัวอย่างวันจันทร์ 10 งวด คือ 10 งวดล่าสุดที่ออกวันจันทร์',
+                        'weekday_filtering_comes_first_then_the',
                       )}
                     </span>
                   </li>
                 </ul>
               </Panel>
               <Panel
-                title={t('คะแนนไม่ใช่คำทำนาย')}
+                title={t('scores_are_not_predictions')}
                 eyebrow="TRANSPARENT BY DESIGN"
               >
                 <p>
                   {tx(
-                    'คะแนนใช้เปรียบเทียบความสอดคล้องกับข้อมูลย้อนหลังเท่านั้น คะแนน 90 ไม่ได้แปลว่ามีโอกาสถูก 90% ในการสุ่มเลขอย่างเท่าเทียม เลขแต่ละชุดมีโอกาสเท่ากัน และผลครั้งก่อนหน้าไม่ได้ทำให้เลขหนึ่ง “ถึงเวลาออก”',
+                    'scores_describe_historical_alignment_only_a',
                   )}
                 </p>
                 <Formula picks />
                 <div className="info-box">
                   {tx(
-                    'ข้อมูลจำนวนงวดน้อยอาจมีความผันผวนสูง ควรดูจำนวนชุดข้อมูลควบคู่กับเปอร์เซ็นต์เสมอ',
+                    'small_samples_can_fluctuate_substantially_always',
                   )}
                 </div>
               </Panel>
@@ -673,11 +673,11 @@ export default function App() {
           <footer className="footer">
             <div>
               <FlaskConical size={17} />
-              <span>{tx('สร้างความเข้าใจ จากสิ่งที่เกิดขึ้นจริง')}</span>
+              <span>{tx('understanding_grounded_in_real_results')}</span>
             </div>
             <p>
               {tx(
-                'วิเคราะห์สถิติในอดีตเพื่อการศึกษาเท่านั้น ไม่สามารถทำนายหรือรับประกันผลรางวัลได้',
+                'historical_analysis_for_education_only_it',
               )}
             </p>
             <span className="footer-edition">
@@ -686,14 +686,14 @@ export default function App() {
           </footer>
         </main>
       </div>
-      <nav className="mobile-bottom-nav" aria-label={t('เมนูลัดมือถือ')}>
+      <nav className="mobile-bottom-nav" aria-label={t('mobile_shortcuts')}>
         {(
           [
-            { view: 'overview', label: t('เลขคัด'), Icon: Home },
-            { view: 'three', label: t('3 ตัว'), Icon: Boxes },
-            { view: 'two', label: t('2 ตัว'), Icon: Grid2X2 },
-            { view: 'scorer', label: t('เช็กเลข'), Icon: SearchCheck },
-            { view: 'history', label: t('ย้อนหลัง'), Icon: HistoryIcon },
+            { view: 'overview', label: t('picks'), Icon: Home },
+            { view: 'three', label: t('three_digits'), Icon: Boxes },
+            { view: 'two', label: t('two_digits'), Icon: Grid2X2 },
+            { view: 'scorer', label: t('check_numbers'), Icon: SearchCheck },
+            { view: 'history', label: t('archive'), Icon: HistoryIcon },
           ] as const
         ).map(({ view, label, Icon }) => (
           <a
@@ -723,7 +723,7 @@ export default function App() {
             <span>{toast}</span>
             <button
               className="icon-button"
-              aria-label={t('ปิดข้อความแจ้งเตือน')}
+              aria-label={t('dismiss_notification')}
               onClick={() => setToast('')}
             >
               <X size={16} />

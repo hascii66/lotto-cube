@@ -17,7 +17,7 @@ function load() {
     return {
       draws: HISTORICAL_DATA,
       warning:
-        'อ่านข้อมูลที่บันทึกไว้ไม่ได้ กำลังใช้ฐานข้อมูลจริงย้อนหลัง 10 ปี ข้อมูลเดิมจะถูกสำรองก่อนบันทึกครั้งถัดไป',
+        'saved_data_could_not_be_read',
     };
   }
 }
@@ -40,7 +40,7 @@ export function useDraws() {
     } catch {
       throw new Error(
         t(
-          'บันทึกลงอุปกรณ์ไม่ได้ พื้นที่อาจเต็มหรือเบราว์เซอร์ปิดการจัดเก็บ กรุณาส่งออก JSON เพื่อสำรองข้อมูล',
+          'could_not_save_on_this_device',
         ),
       );
     }
