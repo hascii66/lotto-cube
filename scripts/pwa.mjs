@@ -46,6 +46,19 @@ self.addEventListener('fetch', event => {
   }
 });`,
       });
+      const rawManifest = JSON.parse(readFileSync('public/manifest.webmanifest', 'utf8'));
+      rawManifest.id = base;
+      rawManifest.start_url = base;
+      rawManifest.scope = base;
+      rawManifest.icons = rawManifest.icons.map((icon) => ({
+        ...icon,
+        src: icon.src.startsWith('/') ? `${base}${icon.src.slice(1)}` : `${base}${icon.src}`,
+      }));
+      this.emitFile({
+        type: 'asset',
+        fileName: 'manifest.webmanifest',
+        source: JSON.stringify(rawManifest, null, 2),
+      });
     },
   };
 }

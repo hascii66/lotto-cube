@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="th">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -16,6 +16,7 @@
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="LottoCube" />
     <script>
       try {
         const theme = localStorage.getItem('lottocube.theme') || 'system';
@@ -28,7 +29,7 @@
         document.documentElement.dataset.theme = resolved;
         document.documentElement.style.colorScheme = resolved;
         document.documentElement.lang =
-          localStorage.getItem('lottocube.language') === 'en' ? 'en' : 'th';
+          localStorage.getItem('lottocube.language') === 'th' ? 'th' : 'en';
       } catch {}
     </script>
     <title>LottoCube</title>

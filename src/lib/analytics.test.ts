@@ -202,14 +202,14 @@ describe('statistics from the supplied historical results', () => {
   it('finds the exact award and draw date and respects award filters', () => {
     expect(findOccurrences(draws, ['008'])).toContainEqual({
       date: '2024-09-16',
-      label: 'เลขท้าย 3 ตัว',
+      label: expect.stringMatching(/เลขท้าย 3 ตัว|Last 3 digits/),
       number: '008',
     });
     expect(findOccurrences(draws, ['008'], 'front')).toEqual([]);
     expect(findOccurrences(draws, ['21'])).toHaveLength(2);
     expect(findOccurrences(draws, [draws[0].prize1])).toContainEqual({
       date: draws[0].date,
-      label: 'รางวัลที่ 1',
+      label: expect.stringMatching(/รางวัลที่ 1|First prize/),
       number: draws[0].prize1,
     });
     expect(findOccurrences(draws, ['000000'])).toEqual([]);

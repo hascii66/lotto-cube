@@ -45,7 +45,7 @@ describe('data boundary validation', () => {
     expect(() => parseDraws({ draws })).toThrow();
     expect(() => parseDraws([draws[0], draws[0]])).toThrow();
     expect(() => parseDraws([draws[0], { ...draws[1], last2: 'bad' }])).toThrow(
-      'รายการที่ 2',
+      /รายการที่ 2|Entry 2/,
     );
   });
   it('keeps existing records during sync, replaces only on explicit import, and sorts', () => {

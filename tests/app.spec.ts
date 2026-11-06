@@ -15,6 +15,11 @@ const current = {
   checkedAt: '2026-11-05T12:00:00Z',
 };
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('lottocube.language')) {
+      localStorage.setItem('lottocube.language', 'th');
+    }
+  });
   await page.route('**/api/history', (route) =>
     route.fulfill({ json: current }),
   );

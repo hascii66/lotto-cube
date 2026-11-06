@@ -38,18 +38,18 @@ test('production PWA installs its shell and fonts and reopens offline in both la
   await context.setOffline(true);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(
-    page.getByRole('heading', { name: 'เลขคัดและผลย้อนหลัง' }),
+    page.getByRole('heading', { name: 'Picks and past results' }),
   ).toBeVisible();
-  await expect(page.locator('.freshness-note')).toContainText('ออฟไลน์');
+  await expect(page.locator('.freshness-note')).toContainText('Offline');
   await page
-    .getByRole('button', { name: 'เปลี่ยนภาษา / Change language' })
+    .getByRole('button', { name: 'Change language / เปลี่ยนภาษา' })
     .click();
   await expect(
-    page.getByRole('heading', { name: 'Picks and past results' }),
+    page.getByRole('heading', { name: 'เลขคัดและผลย้อนหลัง' }),
   ).toBeVisible();
   const reopened = await context.newPage();
   await reopened.goto('/?view=two', { waitUntil: 'domcontentloaded' });
   await expect(reopened.locator('.heat-cell')).toHaveCount(100);
-  await expect(reopened.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(reopened.locator('html')).toHaveAttribute('lang', 'th');
   await reopened.close();
 });
