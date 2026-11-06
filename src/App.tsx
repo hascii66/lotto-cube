@@ -73,9 +73,7 @@ const getPageContent = (): Record<
   },
   three: {
     title: t('a_closer_look_at_all_three'),
-    description: t(
-      'position_frequencies_number_patterns_and_digit',
-    ),
+    description: t('position_frequencies_number_patterns_and_digit'),
     eyebrow: '3-DIGIT ANALYTICS',
   },
   two: {
@@ -131,7 +129,7 @@ export default function App() {
   const latest = draws[0];
   const content = pageContent[state.view];
 
-  const showSidebarTools = !narrow;
+  const showSidebarTools = false;
   useEffect(() => {
     document.title = `${content.title} | LottoCube`;
   }, [content.title, language]);
@@ -416,9 +414,7 @@ export default function App() {
                   ? t('checking_the_latest_published_draw_automatically')
                   : freshness === 'current'
                     ? t('complete_through_the_latest_published_draw')
-                    : t(
-                        'latest_draw_unverified_using_saved_data',
-                      )}
+                    : t('latest_draw_unverified_using_saved_data')}
             </span>
           </div>
           {(offline || warning) && (
@@ -426,9 +422,7 @@ export default function App() {
               {offline && (
                 <span>
                   <WifiOff size={17} />
-                  {tx(
-                    'you_are_offline_saved_data_remains',
-                  )}
+                  {tx('you_are_offline_saved_data_remains')}
                 </span>
               )}
               {warning && <p>{t(warning)}</p>}
@@ -584,16 +578,8 @@ export default function App() {
                 eyebrow="DATA PROVENANCE"
                 aside={<BookOpen size={22} />}
               >
-                <p>
-                  {tx(
-                    'the_app_uses_ten_years_of',
-                  )}
-                </p>
-                <p>
-                  {tx(
-                    'latest_draw_means_the_newest_result',
-                  )}
-                </p>
+                <p>{tx('the_app_uses_ten_years_of')}</p>
+                <p>{tx('latest_draw_means_the_newest_result')}</p>
                 <p>
                   {tx('results_from')}{' '}
                   <a
@@ -603,15 +589,9 @@ export default function App() {
                   >
                     Sanook archive <ArrowUpRight size={13} />
                   </a>{' '}
-                  {tx(
-                    'an_external_source_always_verify_prize',
-                  )}
+                  {tx('an_external_source_always_verify_prize')}
                 </p>
-                <p>
-                  {tx(
-                    'the_server_maintains_the_shared_archive',
-                  )}
-                </p>
+                <p>{tx('the_server_maintains_the_shared_archive')}</p>
               </Panel>
               <Panel
                 title={t('read_the_charts_with_confidence')}
@@ -620,35 +600,19 @@ export default function App() {
                 <ul className="reading-guide">
                   <li>
                     <b>{tx('frequency_by_position')}</b>
-                    <span>
-                      {tx(
-                        'digits_0_9_are_counted_in',
-                      )}
-                    </span>
+                    <span>{tx('digits_0_9_are_counted_in')}</span>
                   </li>
                   <li>
                     <b>{tx('number_patterns')}</b>
-                    <span>
-                      {tx(
-                        'of_all_numbers_000_999_72',
-                      )}
-                    </span>
+                    <span>{tx('of_all_numbers_000_999_72')}</span>
                   </li>
                   <li>
                     <b>{tx('low_high_and_even_odd')}</b>
-                    <span>
-                      {tx(
-                        'low_means_000_499_and_high',
-                      )}
-                    </span>
+                    <span>{tx('low_means_000_499_and_high')}</span>
                   </li>
                   <li>
                     <b>{tx('filter_by_weekday')}</b>
-                    <span>
-                      {tx(
-                        'weekday_filtering_comes_first_then_the',
-                      )}
-                    </span>
+                    <span>{tx('weekday_filtering_comes_first_then_the')}</span>
                   </li>
                 </ul>
               </Panel>
@@ -656,16 +620,10 @@ export default function App() {
                 title={t('scores_are_not_predictions')}
                 eyebrow="TRANSPARENT BY DESIGN"
               >
-                <p>
-                  {tx(
-                    'scores_describe_historical_alignment_only_a',
-                  )}
-                </p>
+                <p>{tx('scores_describe_historical_alignment_only_a')}</p>
                 <Formula picks />
                 <div className="info-box">
-                  {tx(
-                    'small_samples_can_fluctuate_substantially_always',
-                  )}
+                  {tx('small_samples_can_fluctuate_substantially_always')}
                 </div>
               </Panel>
             </div>
@@ -675,11 +633,7 @@ export default function App() {
               <FlaskConical size={17} />
               <span>{tx('understanding_grounded_in_real_results')}</span>
             </div>
-            <p>
-              {tx(
-                'historical_analysis_for_education_only_it',
-              )}
-            </p>
+            <p>{tx('historical_analysis_for_education_only_it')}</p>
             <span className="footer-edition">
               LOTTOCUBE · REAL DATA EDITION
             </span>
