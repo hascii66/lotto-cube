@@ -89,7 +89,7 @@ export function TopDrawPicks({
             >
               <option value="next">
                 {draws[0]
-                  ? t('งวดถัดไป · {0} งวดถึง {1}', [
+                  ? t('ถัดไป · {0} งวด · {1}', [
                       formatNumber(draws.length),
                       formatDate(draws[0].date, true),
                     ])

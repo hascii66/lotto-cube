@@ -81,9 +81,7 @@ export function Scorer({
               className={mode === value ? 'selected' : ''}
               onClick={() => switchMode(value)}
             >
-              {tx('เลข')}
-              {value}
-              {tx('ตัว')}
+              {value === '3' ? t('3 ตัว') : t('2 ตัว')}
             </button>
           ))}
         </div>

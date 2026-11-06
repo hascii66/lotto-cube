@@ -1,4 +1,4 @@
-import { t, tx } from './lib/i18n';
+import { getLanguage, t, tx } from './lib/i18n';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
@@ -131,7 +131,7 @@ export default function App() {
   const latest = draws[0];
   const content = pageContent[state.view];
 
-  const showSidebarTools = false;
+  const showSidebarTools = !narrow;
   useEffect(() => {
     document.title = `${content.title} | LottoCube`;
   }, [content.title, language]);
@@ -521,8 +521,7 @@ export default function App() {
                   <option value="all">{tx('ทุกวันในสัปดาห์')}</option>
                   {weekdays().map((day, i) => (
                     <option key={day} value={i}>
-                      {tx('วัน')}
-                      {day}
+                      {getLanguage() === 'th' ? `วัน${day}` : day}
                     </option>
                   ))}
                 </select>

@@ -318,21 +318,21 @@ test('mobile homepage shows all ten picks immediately and shortcuts retain conte
   await page.locator('.latest-peek > summary').click();
   await nav.getByRole('link', { name: 'เช็กเลข', exact: true }).click();
   await expect(page.locator('#scorer-0')).toBeVisible();
-  await nav.getByRole('link', { name: 'ผลย้อนหลัง', exact: true }).click();
+  await nav.getByRole('link', { name: 'ย้อนหลัง', exact: true }).click();
   await expect(page.getByLabel('ค้นหาเลขในฐานข้อมูล')).toBeVisible();
   await nav.getByRole('link', { name: 'เลขคัด', exact: true }).click();
   await expect(
     category.getByRole('button', { name: 'ท้าย 3 ตัว', exact: true }),
   ).toHaveAttribute('aria-pressed', 'true');
-  const more = nav.getByRole('button', { name: 'เพิ่มเติม', exact: true });
-  await more.click();
-  await expect(more).toHaveAttribute('aria-expanded', 'true');
+  const menu = page.getByRole('button', { name: 'เปิดเมนูหลัก', exact: true });
+  await menu.click();
+  await expect(menu).toHaveAttribute('aria-expanded', 'true');
   await expect(
     page.getByRole('button', { name: 'ปิดเมนู', exact: true }),
   ).toBeFocused();
   await page.keyboard.press('Escape');
-  await expect(more).toBeFocused();
-  await expect(more).toHaveAttribute('aria-expanded', 'false');
+  await expect(menu).toBeFocused();
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
 });
 
 test('history search, highlights, clearing, pagination, and Back preserve state', async ({
@@ -519,6 +519,7 @@ test('320px layout, keyboard dialog restoration, installation help, and reduced 
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.locator('.heat-cell').first()).toBeFocused();
+  await page.getByRole('button', { name: 'เปิดเมนูหลัก', exact: true }).click();
   await page.getByRole('button', { name: 'ติดตั้งแอป', exact: true }).click();
   await expect(page.getByRole('dialog')).toContainText('Safari');
 });

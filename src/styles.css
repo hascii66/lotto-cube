@@ -3978,7 +3978,7 @@ select {
     position: fixed;
     inset: auto 0 0;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--color-border);
     background: var(--color-surface);
@@ -4164,22 +4164,27 @@ body,
 }
 
 .pick-draw-control select {
-  min-height: 50px;
-  padding: 10px 16px 10px 48px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 36px 10px 44px;
   border: 1.5px solid var(--color-border);
   border-radius: 14px;
   background-color: var(--color-surface);
   color: var(--color-ink);
   font-size: 15px;
   font-weight: 600;
+  box-sizing: border-box;
 }
 
 .pick-awards {
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  gap: 8px;
   padding: 0;
   border: 0;
   background: transparent;
-  margin: 0 0 8px;
+  margin: 0 0 10px;
 }
 
 .pick-awards button {
@@ -4648,10 +4653,6 @@ body,
 
   .top-last-count-label {
     font-size: 11px;
-  }
-
-  .top-last-count-label {
-    font-size: 14px;
   }
 
   .wayfinding-stop {

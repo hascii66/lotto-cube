@@ -69,11 +69,10 @@ export function History({
         </button>
       </div>
       <p className="table-summary" aria-live="polite">
-        {tx('พบ')}
-        {matching.length}
-        {tx('งวดจากฐานข้อมูลทั้งหมด')}
-        {draws.length}
-        {tx('งวด · ค้นหาได้ทุกรางวัล โดยไม่จำกัดตัวกรองวิเคราะห์')}
+        {t(
+          'พบ {0} งวดจากฐานข้อมูลทั้งหมด {1} งวด · ค้นหาได้ทุกรางวัล',
+          [matching.length, draws.length],
+        )}
       </p>
       <div
         className="table-scroll"
@@ -159,8 +158,7 @@ export function History({
             <ChevronLeft size={18} />
           </button>
           <span>
-            {tx('หน้า')}
-            {current} / {totalPages}
+            {t('หน้า {0} / {1}', [current, totalPages])}
           </span>
           <button
             className="icon-button"
