@@ -22,6 +22,8 @@ export function pwa() {
       const assets = [
         base,
         `${base}manifest.webmanifest`,
+        `${base}favicon.svg`,
+        `${base}apple-touch-icon.png`,
         `${base}icon-192.png`,
         `${base}icon-512.png`,
         `${base}icon-maskable.png`,
