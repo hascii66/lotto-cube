@@ -78,10 +78,10 @@ export function TopDrawPicks({
             </h2>
           </div>
         </div>
-        <label className="pick-draw-control">
+        <label className="pick-draw-control" htmlFor="pick-draw">
           <span className="pick-draw-label">{t('เลือกงวดสำหรับดูเลขคัด')}</span>
           <span className="pick-draw-select-wrap">
-            <CalendarDays size={22} aria-hidden="true" />
+            <CalendarDays size={20} aria-hidden="true" />
             <select
               id="pick-draw"
               value={targetDate}
@@ -89,7 +89,7 @@ export function TopDrawPicks({
             >
               <option value="next">
                 {draws[0]
-                  ? t('ถัดไป · {0} งวด · {1}', [
+                  ? t('งวดถัดไป · {0} งวดถึง {1}', [
                       formatNumber(draws.length),
                       formatDate(draws[0].date, true),
                     ])
@@ -254,11 +254,11 @@ export function TopDrawPicks({
                               )}
                             </span>
                             <strong className="mono">{number}</strong>
-                            <span className="top-last-count">
+                            <span className="top-last-score-wrap">
                               <span className="top-last-count-label">
                                 {t('คะแนน')}
                               </span>
-                              <span>
+                              <span className="top-last-count">
                                 {formatNumber(Math.round(score * 10) / 10)}
                               </span>
                             </span>
