@@ -49,10 +49,10 @@ export function TopDrawPicks({
     ?.picks[0]?.number;
   const label = (digits: 2 | 3 | 6) =>
     digits === 2
-      ? t('เลขท้าย 2 ตัว')
+      ? t('last_two_digits')
       : digits === 3
-        ? t('เลขท้าย 3 ตัว')
-        : t('รางวัลที่ 1 · 6 ตัวตรง');
+        ? t('last_three_digits')
+        : t('first_prize_six_exact');
   const [selected, setSelected] = useState<{
     number: string;
     digits: 2 | 3 | 6;
@@ -74,12 +74,12 @@ export function TopDrawPicks({
           </span>
           <div>
             <h2 id="top-last-title">
-              {past ? t('10 เลขคัดย้อนหลัง') : t('10 เลขคัดสำหรับงวดถัดไป')}
+              {past ? t('ten_historical_picks') : t('ten_next_draw_picks')}
             </h2>
           </div>
         </div>
         <label className="pick-draw-control" htmlFor="pick-draw">
-          <span className="pick-draw-label">{t('เลือกงวดสำหรับดูเลขคัด')}</span>
+          <span className="pick-draw-label">{t('choose_draw_for_picks')}</span>
           <span className="pick-draw-select-wrap">
             <CalendarDays size={20} aria-hidden="true" />
             <select
@@ -122,7 +122,7 @@ export function TopDrawPicks({
       <div
         className="segmented pick-awards"
         role="group"
-        aria-label={t('เลือกประเภทเลขคัด')}
+        aria-label={t('choose_pick_category')}
       >
         {(['2', '3', '6'] as const).map((value) => (
           <button
@@ -133,10 +133,10 @@ export function TopDrawPicks({
             onClick={() => onDigitsChange(value)}
           >
             {value === '2'
-              ? t('ท้าย 2 ตัว')
+              ? t('last_two_number')
               : value === '3'
-                ? t('ท้าย 3 ตัว')
-                : t('6 ตัวตรง')}
+                ? t('last_three_number')
+                : t('six_exact_digits')}
           </button>
         ))}
       </div>

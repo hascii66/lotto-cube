@@ -8,6 +8,17 @@ import { formatDate, weekdays } from './format';
 
 afterEach(() => setLanguage('th'));
 describe('English and Thai locale contract', () => {
+  it('translates semantic identifier keys such as last_three_number in both English and Thai', () => {
+    setLanguage('th');
+    expect(t('last_three_number')).toBe('ท้าย 3 ตัว');
+    expect(t('last_two_number')).toBe('ท้าย 2 ตัว');
+    expect(t('six_exact_digits')).toBe('6 ตัวตรง');
+    setLanguage('en');
+    expect(t('last_three_number')).toBe('Last 3 digits');
+    expect(t('last_two_number')).toBe('Last 2 digits');
+    expect(t('six_exact_digits')).toBe('6 exact digits');
+  });
+
   it('translates placeholders and changes calendars and weekdays consistently', () => {
     setLanguage('en');
     expect(t('{0} งวดในคลัง', [238])).toBe('238 stored draws');
