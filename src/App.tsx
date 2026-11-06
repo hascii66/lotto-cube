@@ -19,11 +19,13 @@ import {
   Menu,
   Plus,
   LoaderCircle,
+  Search,
   SearchCheck,
   ShieldCheck,
   SlidersHorizontal,
   WifiOff,
   X,
+  Boxes,
 } from 'lucide-react';
 import { useDraws } from './hooks/useDraws';
 import { useUrlState } from './hooks/useUrlState';
@@ -129,6 +131,7 @@ export default function App() {
   const latest = draws[0];
   const content = pageContent[state.view];
 
+  const showSidebarTools = false;
   useEffect(() => {
     document.title = `${content.title} | LottoCube`;
   }, [content.title, language]);
@@ -238,6 +241,7 @@ export default function App() {
           <span>{tx('lotto-cube')}</span>
           <span className="mini-version">V.0.1</span>
         </div>
+        {narrow && <Preferences />}
         <p className="nav-label">{tx('สำรวจข้อมูล')}</p>
         <nav>
           {navigation.map(({ view, label, icon: Icon, badge }) => (
@@ -258,57 +262,61 @@ export default function App() {
           ))}
         </nav>
         <div className="sidebar-divider" />
-        <p className="nav-label">{tx('คลังข้อมูล')}</p>
-        <div className="data-tools">
-          <button onClick={() => setDataAction('add')}>
-            <Plus size={18} />
-            {tx('เพิ่มผลสลากงวดใหม่')}
-          </button>
-          <button onClick={() => setDataAction('import')}>
-            <FileUp size={18} />
-            {tx('นำเข้า JSON')}
-          </button>
-          <button
-            onClick={() => {
-              exportJson(draws);
-              setToast(t('ส่งออกไฟล์ JSON แล้ว'));
-            }}
-          >
-            <ArrowDownToLine size={18} />
-            {tx('ส่งออกข้อมูล')}
-          </button>
-        </div>
-        <div className="sidebar-bottom">
-          <div className="workspace-note">
-            <FlaskConical size={21} />
-            <strong>{tx('ข้อมูลจริง สูตรโปร่งใส')}</strong>
-            <p>
-              {tx('สำรวจสิ่งที่เกิดขึ้นแล้ว')}
-              <br />
-              {tx('ด้วยความเข้าใจที่มากขึ้น')}
-            </p>
-            <button onClick={() => navigate('guide')}>
-              {tx('รู้จักวิธีอ่านสถิติ')}
-              <ArrowUpRight size={15} />
-            </button>
-          </div>
-          <a
-            className="guide-link"
-            href="?view=guide"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate('guide');
-            }}
-            aria-current={state.view === 'guide' ? 'page' : undefined}
-          >
-            <CircleHelp size={18} />
-            {tx('คู่มือและที่มาข้อมูล')} <ArrowUpRight size={14} />
-          </a>
-          <div className="local-status">
-            <span className="status-dot" />
-            {tx('บันทึกบนอุปกรณ์นี้')} <ShieldCheck size={15} />
-          </div>
-        </div>
+        {showSidebarTools && (
+          <>
+            <p className="nav-label">{tx('คลังข้อมูล')}</p>
+            <div className="data-tools">
+              <button onClick={() => setDataAction('add')}>
+                <Plus size={18} />
+                {tx('เพิ่มผลสลากงวดใหม่')}
+              </button>
+              <button onClick={() => setDataAction('import')}>
+                <FileUp size={18} />
+                {tx('นำเข้า JSON')}
+              </button>
+              <button
+                onClick={() => {
+                  exportJson(draws);
+                  setToast(t('ส่งออกไฟล์ JSON แล้ว'));
+                }}
+              >
+                <ArrowDownToLine size={18} />
+                {tx('ส่งออกข้อมูล')}
+              </button>
+            </div>
+            <div className="sidebar-bottom">
+              <div className="workspace-note">
+                <FlaskConical size={21} />
+                <strong>{tx('ข้อมูลจริง สูตรโปร่งใส')}</strong>
+                <p>
+                  {tx('สำรวจสิ่งที่เกิดขึ้นแล้ว')}
+                  <br />
+                  {tx('ด้วยความเข้าใจที่มากขึ้น')}
+                </p>
+                <button onClick={() => navigate('guide')}>
+                  {tx('รู้จักวิธีอ่านสถิติ')}
+                  <ArrowUpRight size={15} />
+                </button>
+              </div>
+              <a
+                className="guide-link"
+                href="?view=guide"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('guide');
+                }}
+                aria-current={state.view === 'guide' ? 'page' : undefined}
+              >
+                <CircleHelp size={18} />
+                {tx('คู่มือและที่มาข้อมูล')} <ArrowUpRight size={14} />
+              </a>
+              <div className="local-status">
+                <span className="status-dot" />
+                {tx('บันทึกบนอุปกรณ์นี้')} <ShieldCheck size={15} />
+              </div>
+            </div>
+          </>
+        )}
       </aside>
       {mobileNav && (
         <button
@@ -359,7 +367,17 @@ export default function App() {
               <b>{latest ? formatDate(latest.date, true) : '—'}</b>
             </span>
           </div>
-          <Preferences />
+          {narrow ? (
+            <button
+              className="icon-button search-button"
+              aria-label={t('เช็กเลข')}
+              onClick={() => navigate('scorer')}
+            >
+              <Search size={24} />
+            </button>
+          ) : (
+            <Preferences />
+          )}
           <button
             ref={menuRef}
             className="icon-button menu-button"
@@ -670,51 +688,28 @@ export default function App() {
         </main>
       </div>
       <nav className="mobile-bottom-nav" aria-label={t('เมนูลัดมือถือ')}>
-        <a
-          href="?view=overview"
-          aria-current={state.view === 'overview' ? 'page' : undefined}
-          onClick={(event) => {
-            event.preventDefault();
-            navigate('overview');
-          }}
-        >
-          <Home size={21} aria-hidden="true" />
-          <span>{t('เลขคัด')}</span>
-        </a>
-        <a
-          href="?view=scorer"
-          aria-current={state.view === 'scorer' ? 'page' : undefined}
-          onClick={(event) => {
-            event.preventDefault();
-            navigate('scorer');
-          }}
-        >
-          <SearchCheck size={21} aria-hidden="true" />
-          <span>{t('เช็กเลข')}</span>
-        </a>
-        <a
-          href="?view=history"
-          aria-current={state.view === 'history' ? 'page' : undefined}
-          onClick={(event) => {
-            event.preventDefault();
-            navigate('history');
-          }}
-        >
-          <HistoryIcon size={21} aria-hidden="true" />
-          <span>{t('ผลย้อนหลัง')}</span>
-        </a>
-        <button
-          type="button"
-          aria-expanded={mobileNav}
-          aria-controls="main-navigation"
-          onClick={(event) => {
-            lastTriggerRef.current = event.currentTarget;
-            setMobileNav(true);
-          }}
-        >
-          <Menu size={21} aria-hidden="true" />
-          <span>{t('เพิ่มเติม')}</span>
-        </button>
+        {(
+          [
+            { view: 'overview', label: t('เลขคัด'), Icon: Home },
+            { view: 'three', label: t('3 ตัว'), Icon: Boxes },
+            { view: 'two', label: t('2 ตัว'), Icon: Grid2X2 },
+            { view: 'scorer', label: t('เช็กเลข'), Icon: SearchCheck },
+            { view: 'history', label: t('ย้อนหลัง'), Icon: HistoryIcon },
+          ] as const
+        ).map(({ view, label, Icon }) => (
+          <a
+            key={view}
+            href={`?view=${view}`}
+            aria-current={state.view === view ? 'page' : undefined}
+            onClick={(event) => {
+              event.preventDefault();
+              navigate(view);
+            }}
+          >
+            <Icon size={21} aria-hidden="true" />
+            <span>{label}</span>
+          </a>
+        ))}
       </nav>
       <div
         className={`toast ${toast ? 'toast-visible' : ''}`}
