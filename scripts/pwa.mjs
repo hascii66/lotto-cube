@@ -2,8 +2,13 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 export function pwa() {
+  let base = '/';
   return {
     name: 'lottocube-offline',
+    configResolved(config) {
+      base = config.base || '/';
+      if (!base.endsWith('/')) base += '/';
+    },
     generateBundle(_, bundle) {
       const files = Object.keys(bundle).filter(
         (name) => !name.endsWith('.map'),
@@ -15,12 +20,12 @@ export function pwa() {
         .digest('hex')
         .slice(0, 12);
       const assets = [
-        '/',
-        '/manifest.webmanifest',
-        '/icon-192.png',
-        '/icon-512.png',
-        '/icon-maskable.png',
-        ...files.map((file) => `/${file}`),
+        base,
+        `${base}manifest.webmanifest`,
+        `${base}icon-192.png`,
+        `${base}icon-512.png`,
+        `${base}icon-maskable.png`,
+        ...files.map((file) => `${base}${file}`),
       ];
       this.emitFile({
         type: 'asset',
@@ -35,7 +40,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (event.request.method !== 'GET' || url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return;
   if (event.request.mode === 'navigate') {
-    event.respondWith(fetch(event.request).catch(() => caches.match('/')));
+    event.respondWith(fetch(event.request).catch(() => caches.match('${base}')));
   } else if (ASSETS.includes(url.pathname)) {
     event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)));
   }

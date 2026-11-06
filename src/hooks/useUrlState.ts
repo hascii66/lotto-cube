@@ -25,6 +25,12 @@ function read() {
       ? p.get('weekday')!
       : 'all',
     query: p.get('q')?.slice(0, 30) ?? '',
+    pickDraw: /^\d{4}-\d{2}-\d{2}$/.test(p.get('pickDraw') ?? '')
+      ? p.get('pickDraw')!
+      : 'next',
+    pickDigits: ['2', '3', '6'].includes(p.get('pickDigits') ?? '')
+      ? (p.get('pickDigits') as '2' | '3' | '6')
+      : '2',
     page: Math.max(1, Math.min(1000, Number(p.get('page')) || 1)),
   };
 }

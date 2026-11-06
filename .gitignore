@@ -12,3 +12,16 @@ data/*.tmp
 data/*.bak
 .env*
 !.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Agent harnesses and local tool caches
+.agent/
+.agents/
+.claude/
+.codex/
+.gemini/
+.impeccable/
+

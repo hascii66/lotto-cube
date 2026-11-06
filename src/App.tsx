@@ -6,17 +6,21 @@ import {
   ArrowUpRight,
   BookOpen,
   ChartColumn,
-  ChartNoAxesCombined,
+  ChevronDown,
   Check,
   CircleHelp,
   Database,
   FileUp,
   FlaskConical,
   Grid2X2,
+  Home,
+  Boxes,
+  History as HistoryIcon,
   LayoutDashboard,
   Menu,
   Plus,
   LoaderCircle,
+  Search,
   SearchCheck,
   ShieldCheck,
   SlidersHorizontal,
@@ -31,14 +35,14 @@ import { exportJson } from './lib/data';
 import type { PrizeType, View } from './lib/types';
 import { DataManager, type DataAction } from './components/DataManager';
 import { LatestDraw, Metrics, ThreeAnalytics } from './components/Overview';
-import { TopLastNumbers } from './components/TopLastNumbers';
+import { TopDrawPicks } from './components/TopDrawPicks';
 import { TwoAnalytics } from './components/TwoAnalytics';
 import { Scorer } from './components/Scorer';
 import { History } from './components/History';
 import { Empty, Formula, Panel } from './components/ui';
 import { Preferences, usePreferences } from './components/Preferences';
 const getNavigation = () => [
-  { view: 'overview' as const, label: t('ภาพรวมสถิติ'), icon: LayoutDashboard },
+  { view: 'overview' as const, label: t('เลขคัด'), icon: LayoutDashboard },
   {
     view: 'three' as const,
     label: t('วิเคราะห์เลข 3 ตัว'),
@@ -63,11 +67,9 @@ const getPageContent = (): Record<
   }
 > => ({
   overview: {
-    title: t('ทุกตัวเลข มีเรื่องราว'),
-    description: t(
-      'สำรวจสถิติหวยไทยย้อนหลัง เปลี่ยนข้อมูลที่มีให้เป็นความเข้าใจ',
-    ),
-    eyebrow: 'THE LOTTERY, THROUGH DATA',
+    title: t('เลขคัด'),
+    description: t('เลือกเลขที่สนใจ แล้วแตะเพื่อดูประวัติ'),
+    eyebrow: 'LOTTOCUBE',
   },
   three: {
     title: t('มองให้ลึก ครบทั้ง 3 หลัก'),
@@ -127,6 +129,8 @@ export default function App() {
   );
   const latest = draws[0];
   const content = pageContent[state.view];
+
+  const showSidebarTools = false;
   useEffect(() => {
     document.title = `${content.title} | LottoCube`;
   }, [content.title, language]);
@@ -190,11 +194,12 @@ export default function App() {
     }
   }
   return (
-    <div className="app-shell">
+    <div className={`app-shell${state.view === 'overview' ? ' app-home' : ''}`}>
       <a className="skip-link" href="#main-content">
         {tx('ข้ามไปยังเนื้อหาหลัก')}
       </a>
       <aside
+        id="main-navigation"
         ref={sidebarRef}
         inert={narrow && !mobileNav}
         className={`sidebar ${mobileNav ? 'sidebar-open' : ''}`}
@@ -209,7 +214,11 @@ export default function App() {
           }}
         >
           <span className="brand-mark">
-            <ChartNoAxesCombined size={25} strokeWidth={2.2} />
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#ff9e18" d="M24 3 45 15 24 27 3 15z" />
+              <path fill="#0868cf" d="M3 15 22 26v21L3 36z" />
+              <path fill="#e94d55" d="m45 15-19 11v21l19-11z" />
+            </svg>
           </span>
           <span>
             Lotto<span>Cube</span>
@@ -225,9 +234,10 @@ export default function App() {
         </button>
         <div className="workspace-label">
           <span className="workspace-dot" />
-          <span>{tx('ห้องแล็บของคุณ')}</span>
-          <span className="mini-version">V.1.0</span>
+          <span>{tx('lotto-cube')}</span>
+          <span className="mini-version">V.0.1</span>
         </div>
+        {narrow && <Preferences />}
         <p className="nav-label">{tx('สำรวจข้อมูล')}</p>
         <nav>
           {navigation.map(({ view, label, icon: Icon, badge }) => (
@@ -248,57 +258,61 @@ export default function App() {
           ))}
         </nav>
         <div className="sidebar-divider" />
-        <p className="nav-label">{tx('คลังข้อมูล')}</p>
-        <div className="data-tools">
-          <button onClick={() => setDataAction('add')}>
-            <Plus size={18} />
-            {tx('เพิ่มผลสลากงวดใหม่')}
-          </button>
-          <button onClick={() => setDataAction('import')}>
-            <FileUp size={18} />
-            {tx('นำเข้า JSON')}
-          </button>
-          <button
-            onClick={() => {
-              exportJson(draws);
-              setToast(t('ส่งออกไฟล์ JSON แล้ว'));
-            }}
-          >
-            <ArrowDownToLine size={18} />
-            {tx('ส่งออกข้อมูล')}
-          </button>
-        </div>
-        <div className="sidebar-bottom">
-          <div className="workspace-note">
-            <FlaskConical size={21} />
-            <strong>{tx('ข้อมูลจริง สูตรโปร่งใส')}</strong>
-            <p>
-              {tx('สำรวจสิ่งที่เกิดขึ้นแล้ว')}
-              <br />
-              {tx('ด้วยความเข้าใจที่มากขึ้น')}
-            </p>
-            <button onClick={() => navigate('guide')}>
-              {tx('รู้จักวิธีอ่านสถิติ')}
-              <ArrowUpRight size={15} />
-            </button>
-          </div>
-          <a
-            className="guide-link"
-            href="?view=guide"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate('guide');
-            }}
-            aria-current={state.view === 'guide' ? 'page' : undefined}
-          >
-            <CircleHelp size={18} />
-            {tx('คู่มือและที่มาข้อมูล')} <ArrowUpRight size={14} />
-          </a>
-          <div className="local-status">
-            <span className="status-dot" />
-            {tx('บันทึกบนอุปกรณ์นี้')} <ShieldCheck size={15} />
-          </div>
-        </div>
+        {showSidebarTools && (
+          <>
+            <p className="nav-label">{tx('คลังข้อมูล')}</p>
+            <div className="data-tools">
+              <button onClick={() => setDataAction('add')}>
+                <Plus size={18} />
+                {tx('เพิ่มผลสลากงวดใหม่')}
+              </button>
+              <button onClick={() => setDataAction('import')}>
+                <FileUp size={18} />
+                {tx('นำเข้า JSON')}
+              </button>
+              <button
+                onClick={() => {
+                  exportJson(draws);
+                  setToast(t('ส่งออกไฟล์ JSON แล้ว'));
+                }}
+              >
+                <ArrowDownToLine size={18} />
+                {tx('ส่งออกข้อมูล')}
+              </button>
+            </div>
+            <div className="sidebar-bottom">
+              <div className="workspace-note">
+                <FlaskConical size={21} />
+                <strong>{tx('ข้อมูลจริง สูตรโปร่งใส')}</strong>
+                <p>
+                  {tx('สำรวจสิ่งที่เกิดขึ้นแล้ว')}
+                  <br />
+                  {tx('ด้วยความเข้าใจที่มากขึ้น')}
+                </p>
+                <button onClick={() => navigate('guide')}>
+                  {tx('รู้จักวิธีอ่านสถิติ')}
+                  <ArrowUpRight size={15} />
+                </button>
+              </div>
+              <a
+                className="guide-link"
+                href="?view=guide"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('guide');
+                }}
+                aria-current={state.view === 'guide' ? 'page' : undefined}
+              >
+                <CircleHelp size={18} />
+                {tx('คู่มือและที่มาข้อมูล')} <ArrowUpRight size={14} />
+              </a>
+              <div className="local-status">
+                <span className="status-dot" />
+                {tx('บันทึกบนอุปกรณ์นี้')} <ShieldCheck size={15} />
+              </div>
+            </div>
+          </>
+        )}
       </aside>
       {mobileNav && (
         <button
@@ -310,15 +324,25 @@ export default function App() {
       <div className="main-shell">
         <header className="topbar">
           <div className="breadcrumb">
-            <button
-              className="icon-button menu-button"
-              ref={menuRef}
-              aria-label={t('เปิดเมนูหลัก')}
-              aria-expanded={mobileNav}
-              onClick={() => setMobileNav(!mobileNav)}
+            <a
+              className="mobile-brand"
+              href="?view=overview"
+              onClick={(event) => {
+                event.preventDefault();
+                navigate('overview');
+              }}
             >
-              <Menu size={21} />
-            </button>
+              <span className="brand-mark mobile-brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 48 48">
+                  <path fill="#ff9e18" d="M24 3 45 15 24 27 3 15z" />
+                  <path fill="#0868cf" d="M3 15 22 26v21L3 36z" />
+                  <path fill="#e94d55" d="m45 15-19 11v21l19-11z" />
+                </svg>
+              </span>
+              <span>
+                Lotto<span>Cube</span>
+              </span>
+            </a>
             <span className="desktop-breadcrumb">{tx('ห้องแล็บ')}</span>
             <span className="breadcrumb-slash">/</span>
             <span>
@@ -330,7 +354,7 @@ export default function App() {
           <div className="header-metadata">
             <span className="database-pill">
               <i />{' '}
-              {['history', 'guide'].includes(state.view)
+              {['overview', 'history', 'guide'].includes(state.view)
                 ? t('{0} งวดในคลัง', [draws.length])
                 : t('{0} งวดที่วิเคราะห์', [filtered.length])}
             </span>
@@ -339,6 +363,27 @@ export default function App() {
               <b>{latest ? formatDate(latest.date, true) : '—'}</b>
             </span>
           </div>
+          {narrow ? (
+            <button
+              className="icon-button search-button"
+              aria-label={t('เช็กเลข')}
+              onClick={() => navigate('scorer')}
+            >
+              <Search size={24} />
+            </button>
+          ) : (
+            <Preferences />
+          )}
+          <button
+            ref={menuRef}
+            className="icon-button menu-button"
+            aria-label={t('เปิดเมนูหลัก')}
+            aria-expanded={mobileNav}
+            aria-controls="main-navigation"
+            onClick={() => setMobileNav(true)}
+          >
+            <Menu size={22} />
+          </button>
         </header>
         <main id="main-content" tabIndex={-1}>
           <div className="page-heading">
@@ -350,7 +395,6 @@ export default function App() {
               </h1>
               <p>{content.description}</p>
             </div>
-            <Preferences />
           </div>
           <div className={`freshness-note ${freshness}`} role="status">
             {freshness === 'checking' && !offline ? (
@@ -383,15 +427,36 @@ export default function App() {
               {warning && <p>{t(warning)}</p>}
             </div>
           )}
-          {state.view === 'overview' && latest && (
-            <LatestDraw
-              draw={latest}
-              total={draws.length}
-              onHistory={() => navigate('history')}
+          {state.view === 'overview' && (
+            <TopDrawPicks
+              draws={draws}
+              targetDate={state.pickDraw}
+              onTargetChange={(pickDraw) => update({ pickDraw }, true)}
+              digits={state.pickDigits}
+              onDigitsChange={(pickDigits) => update({ pickDigits })}
+              onNavigate={navigate}
             />
           )}
-          {state.view === 'overview' && <TopLastNumbers draws={draws} />}
-          {!['history', 'guide'].includes(state.view) && (
+          {state.view === 'overview' && latest && (
+            <details className="latest-peek">
+              <summary>
+                <span>
+                  {t('ผลล่าสุดในคลัง')}{' '}
+                  <time dateTime={latest.date}>
+                    {formatDate(latest.date, true)}
+                  </time>
+                </span>
+                <strong className="mono">{latest.prize1}</strong>
+                <ChevronDown size={16} aria-hidden="true" />
+              </summary>
+              <LatestDraw
+                draw={latest}
+                total={draws.length}
+                onHistory={() => navigate('history')}
+              />
+            </details>
+          )}
+          {['three', 'two', 'scorer'].includes(state.view) && (
             <div className="filter-bar">
               <div className="filter-label">
                 <SlidersHorizontal size={17} />
@@ -463,7 +528,7 @@ export default function App() {
               </div>
             </div>
           )}
-          {(state.view === 'overview' || state.view === 'three') && (
+          {state.view === 'three' && (
             <>
               <Metrics stats={stats} draws={filtered} />
               <div className="section-title">
@@ -615,6 +680,30 @@ export default function App() {
           </footer>
         </main>
       </div>
+      <nav className="mobile-bottom-nav" aria-label={t('เมนูลัดมือถือ')}>
+        {(
+          [
+            { view: 'overview', label: t('เลขคัด'), Icon: Home },
+            { view: 'three', label: t('3 ตัว'), Icon: Boxes },
+            { view: 'two', label: t('2 ตัว'), Icon: Grid2X2 },
+            { view: 'scorer', label: t('เช็กเลข'), Icon: SearchCheck },
+            { view: 'history', label: t('ย้อนหลัง'), Icon: HistoryIcon },
+          ] as const
+        ).map(({ view, label, Icon }) => (
+          <a
+            key={view}
+            href={`?view=${view}`}
+            aria-current={state.view === view ? 'page' : undefined}
+            onClick={(event) => {
+              event.preventDefault();
+              navigate(view);
+            }}
+          >
+            <Icon size={21} aria-hidden="true" />
+            <span>{label}</span>
+          </a>
+        ))}
+      </nav>
       <div
         className={`toast ${toast ? 'toast-visible' : ''}`}
         role="status"

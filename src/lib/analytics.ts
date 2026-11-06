@@ -104,23 +104,25 @@ export function findOccurrences(
 ): Occurrence[] {
   return draws.flatMap((draw) => {
     const prizes: [string, string][] =
-      numbers[0]?.length === 2
-        ? [[draw.last2, t('เลขท้าย 2 ตัว')]]
-        : [
-            ...(type === 'all' || type === 'top'
-              ? [[draw.prize1.slice(-3), t('3 ตัวบน')] as [string, string]]
-              : []),
-            ...(type === 'all' || type === 'front'
-              ? draw.front3.map(
-                  (v) => [v, t('เลขหน้า 3 ตัว')] as [string, string],
-                )
-              : []),
-            ...(type === 'all' || type === 'back'
-              ? draw.back3.map(
-                  (v) => [v, t('เลขท้าย 3 ตัว')] as [string, string],
-                )
-              : []),
-          ];
+      numbers[0]?.length === 6
+        ? [[draw.prize1, t('รางวัลที่ 1')]]
+        : numbers[0]?.length === 2
+          ? [[draw.last2, t('เลขท้าย 2 ตัว')]]
+          : [
+              ...(type === 'all' || type === 'top'
+                ? [[draw.prize1.slice(-3), t('3 ตัวบน')] as [string, string]]
+                : []),
+              ...(type === 'all' || type === 'front'
+                ? draw.front3.map(
+                    (v) => [v, t('เลขหน้า 3 ตัว')] as [string, string],
+                  )
+                : []),
+              ...(type === 'all' || type === 'back'
+                ? draw.back3.map(
+                    (v) => [v, t('เลขท้าย 3 ตัว')] as [string, string],
+                  )
+                : []),
+            ];
     return prizes
       .filter(([value]) => numbers.includes(value))
       .map(([number, label]) => ({ number, label, date: draw.date }));
@@ -139,17 +141,57 @@ export function analyzeTwo(draws: Draw[]) {
     max: Math.max(0, ...counts.map((v) => v.count)),
   };
 }
-export function topLastNumbers(draws: Draw[], digits: 2 | 3) {
-  const counts = new Map<string, number>();
-  for (const draw of draws) {
-    for (const number of digits === 2 ? [draw.last2] : draw.back3) {
-      counts.set(number, (counts.get(number) ?? 0) + 1);
-    }
+export function nextDrawPicks(draws: Draw[], digits: 2 | 3 | 6) {
+  if (!draws.length) return [];
+  const values = draws.flatMap((draw) =>
+    digits === 2 ? [draw.last2] : digits === 3 ? draw.back3 : [draw.prize1],
+  );
+  let picks = [{ number: '', score: 0 }];
+  for (let position = 0; position < digits; position++) {
+    const counts = frequency(values, position);
+    const max = Math.max(...counts);
+    // Position scores are additive: a discarded prefix cannot enter the top ten
+    // after appending the same suffix. Keep exact results without a million-number scan.
+    picks = picks
+      .flatMap((pick) =>
+        counts.map((count, digit) => ({
+          number: pick.number + digit,
+          score: pick.score + count / max,
+        })),
+      )
+      .sort((a, b) => b.score - a.score || a.number.localeCompare(b.number))
+      .slice(0, 10);
   }
-  return [...counts]
-    .map(([number, count]) => ({ number, count }))
-    .sort((a, b) => b.count - a.count || a.number.localeCompare(b.number))
-    .slice(0, 10);
+  return picks.map((pick) => ({ ...pick, score: (pick.score / digits) * 100 }));
+}
+export function picksForDraw(draws: Draw[], date = 'next') {
+  const target =
+    date === 'next' ? undefined : draws.find((draw) => draw.date === date);
+  const history =
+    date === 'next'
+      ? draws
+      : target
+        ? draws.filter((draw) => draw.date < date)
+        : [];
+  const groups = ([2, 3, 6] as const).map((digits) => {
+    const picks = nextDrawPicks(history, digits);
+    const actual = target
+      ? digits === 2
+        ? [target.last2]
+        : digits === 3
+          ? target.back3
+          : [target.prize1]
+      : [];
+    return {
+      digits,
+      picks,
+      actual,
+      matched: actual.filter((number) =>
+        picks.some((pick) => pick.number === number),
+      ),
+    };
+  });
+  return { target, history, groups };
 }
 export function scoreTwo(number: string, stats: ReturnType<typeof analyzeTwo>) {
   const components = stats.positions.map(

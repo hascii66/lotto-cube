@@ -13,35 +13,141 @@ import {
   scoreTwo,
   selectDraws,
   topPicks,
-  topLastNumbers,
+  nextDrawPicks,
+  picksForDraw,
 } from './analytics';
 import { weekdayOf } from './format';
 
 describe('statistics from the supplied historical results', () => {
-  it('ranks only the actual last-two and last-three awards, preserving zeros', () => {
-    expect(topLastNumbers([draws[0]], 3)).toEqual([
-      { number: '339', count: 1 },
-      { number: '881', count: 1 },
+  it('reconstructs picks from strictly earlier draws and compares exact award results', () => {
+    const earlier: Draw = {
+      ...draws[0],
+      date: '2024-01-01',
+      prize1: '000000',
+      last2: '09',
+      back3: ['070', '070'],
+    };
+    const target: Draw = {
+      ...draws[0],
+      date: '2024-02-01',
+      prize1: '000001',
+      last2: '09',
+      back3: ['070', '999'],
+    };
+    const later: Draw = {
+      ...draws[0],
+      date: '2024-03-01',
+      prize1: '999999',
+      last2: '99',
+      back3: ['999', '999'],
+    };
+    const result = picksForDraw([later, target, earlier], target.date);
+    expect(result.history).toEqual([earlier]);
+    expect(result.target).toEqual(target);
+    expect(result.groups.map((group) => group.actual)).toEqual([
+      ['09'],
+      ['070', '999'],
+      ['000001'],
     ]);
-    expect(topLastNumbers([draws[9]], 3)).toEqual([
-      { number: '070', count: 1 },
-      { number: '622', count: 1 },
+    expect(result.groups.map((group) => group.matched)).toEqual([
+      ['09'],
+      ['070'],
+      ['000001'],
     ]);
-    expect(topLastNumbers([draws[4]], 2)).toEqual([{ number: '00', count: 1 }]);
+    for (const group of result.groups)
+      expect(group.picks).toEqual(nextDrawPicks([earlier], group.digits));
+    const changed = picksForDraw(
+      [
+        { ...later, last2: '00', prize1: '123456' },
+        { ...target, last2: '88', prize1: '654321', back3: ['888', '888'] },
+        earlier,
+      ],
+      target.date,
+    );
+    expect(changed.groups.map((group) => group.picks)).toEqual(
+      result.groups.map((group) => group.picks),
+    );
   });
-  it('orders tied frequencies numerically and never fills empty ranks with invented results', () => {
-    expect(topLastNumbers(draws, 2).slice(0, 4)).toEqual([
-      { number: '21', count: 2 },
-      { number: '61', count: 2 },
-      { number: '79', count: 2 },
-      { number: '89', count: 2 },
-    ]);
-    expect(topLastNumbers(draws, 3).slice(0, 2)).toEqual([
-      { number: '070', count: 2 },
-      { number: '421', count: 2 },
-    ]);
-    expect(topLastNumbers(draws, 3)).toHaveLength(10);
-    expect(topLastNumbers([], 2)).toEqual([]);
+  it('never substitutes current picks for an unknown draw or a draw without earlier history', () => {
+    const oldest = [...draws].sort((a, b) => a.date.localeCompare(b.date))[0];
+    for (const date of [oldest.date, '1900-01-01']) {
+      const result = picksForDraw(draws, date);
+      expect(result.history).toEqual([]);
+      expect(
+        result.groups.every(
+          (group) => !group.picks.length && !group.matched.length,
+        ),
+      ).toBe(true);
+    }
+    const next = picksForDraw(draws);
+    expect(next.history).toEqual(draws);
+    expect(next.target).toBeUndefined();
+    expect(
+      next.groups.every(
+        (group) => !group.actual.length && !group.matched.length,
+      ),
+    ).toBe(true);
+    for (const group of next.groups)
+      expect(group.picks).toEqual(nextDrawPicks(draws, group.digits));
+  });
+  it('matches exhaustive positional scoring for all 2- and 3-digit combinations', () => {
+    for (const digits of [2, 3] as const) {
+      const values = draws.flatMap((draw) =>
+        digits === 2 ? [draw.last2] : draw.back3,
+      );
+      const counts = Array.from({ length: digits }, (_, position) =>
+        Array.from(
+          { length: 10 },
+          (_, digit) =>
+            values.filter((v) => v[position] === String(digit)).length,
+        ),
+      );
+      const exhaustive = Array.from({ length: 10 ** digits }, (_, value) => {
+        const number = String(value).padStart(digits, '0');
+        const score = [...number].reduce(
+          (sum, digit, i) =>
+            sum + counts[i][Number(digit)] / Math.max(...counts[i]),
+          0,
+        );
+        return { number, score };
+      })
+        .sort((a, b) => b.score - a.score || a.number.localeCompare(b.number))
+        .slice(0, 10)
+        .map((pick) => ({ ...pick, score: (pick.score / digits) * 100 }));
+      expect(nextDrawPicks(draws, digits)).toEqual(exhaustive);
+    }
+  });
+  it('keeps six-digit order and leading zeros with deterministic ties and award-specific inputs', () => {
+    const sample: Draw[] = [
+      { ...draws[0], prize1: '000000', last2: '09', back3: ['070', '070'] },
+    ];
+    const picks = nextDrawPicks(sample, 6);
+    expect(picks.map((pick) => pick.number)).toEqual(
+      Array.from({ length: 10 }, (_, i) => `00000${i}`),
+    );
+    expect(picks[0].score).toBe(100);
+    expect(picks[1].score).toBeCloseTo((100 * 5) / 6);
+    expect(nextDrawPicks(sample, 2)[0]).toEqual({ number: '09', score: 100 });
+    expect(nextDrawPicks(sample, 3)[0]).toEqual({ number: '070', score: 100 });
+    const changedOtherAwards: Draw[] = [
+      {
+        ...sample[0],
+        last2: '99',
+        front3: ['999', '999'],
+        back3: ['999', '999'],
+      },
+    ];
+    expect(nextDrawPicks(changedOtherAwards, 6)).toEqual(picks);
+    for (const digits of [2, 3, 6] as const) {
+      expect(nextDrawPicks([], digits)).toEqual([]);
+      const ranked = nextDrawPicks(draws, digits);
+      expect(new Set(ranked.map((pick) => pick.number)).size).toBe(10);
+      for (const pick of ranked) {
+        expect(pick.number).toMatch(new RegExp(`^[0-9]{${digits}}$`));
+        expect(pick.score).toBeGreaterThanOrEqual(0);
+        expect(pick.score).toBeLessThanOrEqual(100);
+      }
+    }
   });
   it('counts 24 draws and all 120 three-digit prizes without dropping leading zeros', () => {
     const stats = analyzeThree(draws, 'all');
@@ -101,6 +207,12 @@ describe('statistics from the supplied historical results', () => {
     });
     expect(findOccurrences(draws, ['008'], 'front')).toEqual([]);
     expect(findOccurrences(draws, ['21'])).toHaveLength(2);
+    expect(findOccurrences(draws, [draws[0].prize1])).toContainEqual({
+      date: draws[0].date,
+      label: 'รางวัลที่ 1',
+      number: draws[0].prize1,
+    });
+    expect(findOccurrences(draws, ['000000'])).toEqual([]);
   });
   it('counts two-digit prizes independently from three-digit awards', () => {
     const stats = analyzeTwo(draws);

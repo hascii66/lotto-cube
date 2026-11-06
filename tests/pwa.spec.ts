@@ -38,14 +38,14 @@ test('production PWA installs its shell and fonts and reopens offline in both la
   await context.setOffline(true);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(
-    page.getByRole('heading', { name: 'ทุกตัวเลข มีเรื่องราว.' }),
+    page.getByRole('heading', { name: 'เลขคัดและผลย้อนหลัง' }),
   ).toBeVisible();
   await expect(page.locator('.freshness-note')).toContainText('ออฟไลน์');
   await page
     .getByRole('button', { name: 'เปลี่ยนภาษา / Change language' })
     .click();
   await expect(
-    page.getByRole('heading', { name: 'Every number tells a story.' }),
+    page.getByRole('heading', { name: 'Picks and past results' }),
   ).toBeVisible();
   const reopened = await context.newPage();
   await reopened.goto('/?view=two', { waitUntil: 'domcontentloaded' });
