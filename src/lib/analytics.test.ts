@@ -90,32 +90,63 @@ describe('statistics from the supplied historical results', () => {
     for (const group of next.groups)
       expect(group.picks).toEqual(nextDrawPicks(draws, group.digits));
   });
-  it('matches exhaustive positional scoring for all 2- and 3-digit combinations', () => {
+  it('ranks exact 2-digit pairs and exhaustive positional 3-digit combinations', () => {
     for (const digits of [2, 3] as const) {
       const values = draws.flatMap((draw) =>
         digits === 2 ? [draw.last2] : draw.back3,
       );
-      const counts = Array.from({ length: digits }, (_, position) =>
-        Array.from(
-          { length: 10 },
-          (_, digit) =>
-            values.filter((v) => v[position] === String(digit)).length,
-        ),
-      );
-      const exhaustive = Array.from({ length: 10 ** digits }, (_, value) => {
-        const number = String(value).padStart(digits, '0');
-        const score = [...number].reduce(
-          (sum, digit, i) =>
-            sum + counts[i][Number(digit)] / Math.max(...counts[i]),
-          0,
-        );
-        return { number, score };
-      })
-        .sort((a, b) => b.score - a.score || a.number.localeCompare(b.number))
-        .slice(0, 10)
-        .map((pick) => ({ ...pick, score: (pick.score / digits) * 100 }));
+      const exhaustive =
+        digits === 2
+          ? (() => {
+              const counts = new Map<string, number>();
+              values.forEach((number) =>
+                counts.set(number, (counts.get(number) ?? 0) + 1),
+              );
+              const max = Math.max(...counts.values());
+              return Array.from({ length: 100 }, (_, value) =>
+                String(value).padStart(2, '0'),
+              )
+                .map((number) => ({
+                  number,
+                  score: ((counts.get(number) ?? 0) / max) * 100,
+                }))
+                .sort(
+                  (a, b) =>
+                    b.score - a.score || a.number.localeCompare(b.number),
+                )
+                .slice(0, 10);
+            })()
+          : (() => {
+              const counts = Array.from({ length: 3 }, (_, position) =>
+                Array.from(
+                  { length: 10 },
+                  (_, digit) =>
+                    values.filter((v) => v[position] === String(digit)).length,
+                ),
+              );
+              return Array.from({ length: 1000 }, (_, value) => {
+                const number = String(value).padStart(3, '0');
+                const score = [...number].reduce(
+                  (sum, digit, i) =>
+                    sum + counts[i][Number(digit)] / Math.max(...counts[i]),
+                  0,
+                );
+                return { number, score: (score / 3) * 100 };
+              })
+                .sort(
+                  (a, b) =>
+                    b.score - a.score || a.number.localeCompare(b.number),
+                )
+                .slice(0, 10);
+            })();
       expect(nextDrawPicks(draws, digits)).toEqual(exhaustive);
     }
+    const allowed = [1, 2, 4, 8];
+    expect(
+      nextDrawPicks(draws, 2, allowed).every(({ number }) =>
+        [...number].every((digit) => allowed.includes(Number(digit))),
+      ),
+    ).toBe(true);
   });
   it('keeps six-digit order and leading zeros with deterministic ties and award-specific inputs', () => {
     const sample: Draw[] = [
