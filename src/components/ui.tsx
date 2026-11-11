@@ -1,6 +1,7 @@
 import { t, tx } from '../lib/i18n';
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { ArrowUpRight, X, Info, Search } from 'lucide-react';
+import { DEFAULT_ANALYSIS_WINDOW } from '../lib/analytics';
 export function Panel({
   title,
   eyebrow,
@@ -158,9 +159,11 @@ export function TextLink({
 export function Formula({
   picks = false,
   nextDraw = false,
+  analysisWindow = DEFAULT_ANALYSIS_WINDOW,
 }: {
   picks?: boolean;
   nextDraw?: boolean;
+  analysisWindow?: number;
 }) {
   return (
     <details className="formula">
@@ -171,51 +174,17 @@ export function Formula({
       <div>
         {nextDraw ? (
           <>
-            <p>
-              {tx(
-                'next_draw_picks_use_all_stored',
-              )}
-            </p>
-            <p>
-              {tx(
-                'each_position_scores_its_digit_s',
-              )}
-            </p>
-            <p>
-              {tx(
-                'a_top_2_digit_pair_can',
-              )}
-            </p>
-            <p>
-              {tx(
-                'weekday_does_not_affect_the_picks',
-              )}
-            </p>
-            <p>
-              {tx(
-                'the_10_highest_scoring_combinations_are',
-              )}
-            </p>
+            <p>{t('picks_use_selected_window', [analysisWindow])}</p>
+            <p>{tx('each_position_scores_its_digit_s')}</p>
+            <p>{tx('a_top_2_digit_pair_can')}</p>
+            <p>{tx('weekday_does_not_affect_the_picks')}</p>
+            <p>{tx('the_10_highest_scoring_combinations_are')}</p>
           </>
         ) : (
           <>
-            <p>
-              {tx(
-                'three_digit_score_hundreds_tens_units',
-              )}
-            </p>
-            {picks && (
-              <p>
-                {tx(
-                  'ranking_score_three_digit_score_0',
-                )}
-              </p>
-            )}
-            <p>
-              {tx(
-                'two_digit_scores_use_tens_and',
-              )}
-            </p>
+            <p>{tx('three_digit_score_hundreds_tens_units')}</p>
+            {picks && <p>{tx('ranking_score_three_digit_score_0')}</p>}
+            <p>{tx('two_digit_scores_use_tens_and')}</p>
           </>
         )}
       </div>

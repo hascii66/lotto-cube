@@ -8,10 +8,11 @@ export interface Draw {
 }
 
 export type PrizeType = 'all' | 'top' | 'front' | 'back';
+export type AnalysisWindow = number;
 export type View =
   'overview' | 'three' | 'two' | 'scorer' | 'history' | 'guide';
 export interface Filters {
-  limit: '10' | '20' | 'all';
+  limit: AnalysisWindow | `${number}`;
   prize: PrizeType;
   weekday: string;
 }

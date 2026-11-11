@@ -1,6 +1,14 @@
 import { t } from './i18n';
 import type { Draw, Filters, Occurrence, PrizeType } from './types';
 import { weekdayOf } from './format';
+export const DEFAULT_ANALYSIS_WINDOW = 120;
+
+export function latestDraws(draws: Draw[], limit = DEFAULT_ANALYSIS_WINDOW) {
+  return [...draws]
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, limit);
+}
+
 export const prizeLabels = (): Record<PrizeType, string> => ({
   all: t('all_3_digit_awards_5_per'),
   top: t('last_3_digits_of_first_prize'),
@@ -8,16 +16,12 @@ export const prizeLabels = (): Record<PrizeType, string> => ({
   back: t('last_3_digits_2_per_draw'),
 });
 export function selectDraws(draws: Draw[], filters: Filters) {
-  const matching = [...draws]
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .filter(
-      (d) =>
-        filters.weekday === 'all' ||
-        weekdayOf(d.date) === Number(filters.weekday),
-    );
-  return filters.limit === 'all'
-    ? matching
-    : matching.slice(0, Number(filters.limit));
+  const matching = latestDraws(draws, Number(filters.limit)).filter(
+    (d) =>
+      filters.weekday === 'all' ||
+      weekdayOf(d.date) === Number(filters.weekday),
+  );
+  return matching;
 }
 export function threeNumbers(draw: Draw, type: PrizeType = 'all'): string[] {
   return type === 'top'
@@ -110,7 +114,12 @@ export function findOccurrences(
           ? [[draw.last2, t('last_two_digits')]]
           : [
               ...(type === 'all' || type === 'top'
-                ? [[draw.prize1.slice(-3), t('last_3_of_first_prize')] as [string, string]]
+                ? [
+                    [draw.prize1.slice(-3), t('last_3_of_first_prize')] as [
+                      string,
+                      string,
+                    ],
+                  ]
                 : []),
               ...(type === 'all' || type === 'front'
                 ? draw.front3.map(
@@ -141,11 +150,36 @@ export function analyzeTwo(draws: Draw[]) {
     max: Math.max(0, ...counts.map((v) => v.count)),
   };
 }
-export function nextDrawPicks(draws: Draw[], digits: 2 | 3 | 6) {
+export function nextDrawPicks(
+  draws: Draw[],
+  digits: 2 | 3 | 6,
+  allowedDigits?: number[],
+) {
   if (!draws.length) return [];
   const values = draws.flatMap((draw) =>
     digits === 2 ? [draw.last2] : digits === 3 ? draw.back3 : [draw.prize1],
   );
+  if (digits === 2) {
+    const counts = new Map<string, number>();
+    values.forEach((number) =>
+      counts.set(number, (counts.get(number) ?? 0) + 1),
+    );
+    const candidates = Array.from({ length: 100 }, (_, number) =>
+      String(number).padStart(2, '0'),
+    ).filter((number) =>
+      allowedDigits?.length
+        ? [...number].every((digit) => allowedDigits.includes(Number(digit)))
+        : true,
+    );
+    const max = Math.max(...counts.values());
+    return candidates
+      .map((number) => ({
+        number,
+        score: ((counts.get(number) ?? 0) / max) * 100,
+      }))
+      .sort((a, b) => b.score - a.score || a.number.localeCompare(b.number))
+      .slice(0, 10);
+  }
   let picks = [{ number: '', score: 0 }];
   for (let position = 0; position < digits; position++) {
     const counts = frequency(values, position);
@@ -154,9 +188,9 @@ export function nextDrawPicks(draws: Draw[], digits: 2 | 3 | 6) {
     // after appending the same suffix. Keep exact results without a million-number scan.
     picks = picks
       .flatMap((pick) =>
-        counts.map((count, digit) => ({
+        (allowedDigits ?? counts.map((_, digit) => digit)).map((digit) => ({
           number: pick.number + digit,
-          score: pick.score + count / max,
+          score: pick.score + counts[digit] / max,
         })),
       )
       .sort((a, b) => b.score - a.score || a.number.localeCompare(b.number))
@@ -164,14 +198,21 @@ export function nextDrawPicks(draws: Draw[], digits: 2 | 3 | 6) {
   }
   return picks.map((pick) => ({ ...pick, score: (pick.score / digits) * 100 }));
 }
-export function picksForDraw(draws: Draw[], date = 'next') {
+export function picksForDraw(
+  draws: Draw[],
+  date = 'next',
+  limit = DEFAULT_ANALYSIS_WINDOW,
+) {
   const target =
     date === 'next' ? undefined : draws.find((draw) => draw.date === date);
   const history =
     date === 'next'
-      ? draws
+      ? latestDraws(draws, limit)
       : target
-        ? draws.filter((draw) => draw.date < date)
+        ? latestDraws(
+            draws.filter((draw) => draw.date < date),
+            limit,
+          )
         : [];
   const groups = ([2, 3, 6] as const).map((digits) => {
     const picks = nextDrawPicks(history, digits);

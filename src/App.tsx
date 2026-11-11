@@ -1,10 +1,9 @@
-import { getLanguage, t, tx } from './lib/i18n';
+import { t, tx } from './lib/i18n';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
   ArrowDownToLine,
   ArrowUpRight,
-  BookOpen,
   ChartColumn,
   ChevronDown,
   Check,
@@ -22,25 +21,30 @@ import {
   Search,
   SearchCheck,
   ShieldCheck,
-  SlidersHorizontal,
   WifiOff,
   X,
   Boxes,
 } from 'lucide-react';
 import { useDraws } from './hooks/useDraws';
 import { useUrlState } from './hooks/useUrlState';
-import { analyzeThree, prizeLabels, selectDraws } from './lib/analytics';
-import { formatDate, weekdays } from './lib/format';
+import {
+  DEFAULT_ANALYSIS_WINDOW,
+  analyzeThree,
+  selectDraws,
+} from './lib/analytics';
+import { formatDate } from './lib/format';
 import { exportJson } from './lib/data';
-import type { PrizeType, View } from './lib/types';
+import type { View } from './lib/types';
 import { DataManager, type DataAction } from './components/DataManager';
 import { LatestDraw, Metrics, ThreeAnalytics } from './components/Overview';
 import { TopDrawPicks } from './components/TopDrawPicks';
 import { TwoAnalytics } from './components/TwoAnalytics';
 import { Scorer } from './components/Scorer';
 import { History } from './components/History';
-import { Empty, Formula, Panel } from './components/ui';
+import { Empty } from './components/ui';
 import { Preferences, usePreferences } from './components/Preferences';
+import { AnalysisFilters } from './components/AnalysisFilters';
+import { GuidePage } from './components/GuidePage';
 const getNavigation = () => [
   { view: 'overview' as const, label: t('picks'), icon: LayoutDashboard },
   {
@@ -433,8 +437,12 @@ export default function App() {
               draws={draws}
               targetDate={state.pickDraw}
               onTargetChange={(pickDraw) => update({ pickDraw }, true)}
+              thaksaDate={state.thaksaDate}
+              onThaksaDateChange={(thaksaDate) => update({ thaksaDate })}
               digits={state.pickDigits}
               onDigitsChange={(pickDigits) => update({ pickDigits })}
+              limit={state.limit}
+              onLimitChange={(limit) => update({ limit })}
               onNavigate={navigate}
             />
           )}
@@ -458,75 +466,17 @@ export default function App() {
             </details>
           )}
           {['three', 'two', 'scorer'].includes(state.view) && (
-            <div className="filter-bar">
-              <div className="filter-label">
-                <SlidersHorizontal size={17} />
-                <span>{tx('analysis_period')}</span>
-              </div>
-              <div className="filter-control">
-                <label htmlFor="filter-limit" className="sr-only">
-                  {tx('draw_count')}
-                </label>
-                <select
-                  id="filter-limit"
-                  value={state.limit}
-                  onChange={(e) =>
-                    update({ limit: e.target.value as typeof state.limit })
-                  }
-                >
-                  <option value="all">
-                    {tx('all')}
-                    {draws.length}
-                    {tx('draws')}
-                  </option>
-                  <option value="20">{tx('latest_20_draws')}</option>
-                  <option value="10">{tx('latest_10_draws')}</option>
-                </select>
-              </div>
-              {state.view !== 'two' && (
-                <div className="filter-control filter-prize">
-                  <label className="sr-only" htmlFor="filter-prize">
-                    {tx('award_type')}
-                  </label>
-                  <select
-                    id="filter-prize"
-                    value={state.prize}
-                    onChange={(e) =>
-                      update({ prize: e.target.value as PrizeType })
-                    }
-                  >
-                    {Object.entries(prizeLabels()).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-              <div className="filter-control">
-                <label htmlFor="filter-weekday" className="sr-only">
-                  {tx('draw_weekday')}
-                </label>
-                <select
-                  id="filter-weekday"
-                  value={state.weekday}
-                  onChange={(e) => update({ weekday: e.target.value })}
-                >
-                  <option value="all">{tx('any_weekday')}</option>
-                  {weekdays().map((day, i) => (
-                    <option key={day} value={i}>
-                      {getLanguage() === 'th' ? `วัน${day}` : day}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="filter-result">
-                <span className="status-dot" />
-                {tx('using')}
-                {filtered.length}
-                {tx('draws')}
-              </div>
-            </div>
+            <AnalysisFilters
+              limit={state.limit}
+              max={Math.max(DEFAULT_ANALYSIS_WINDOW, draws.length)}
+              prize={state.prize}
+              weekday={state.weekday}
+              count={filtered.length}
+              showPrize={state.view !== 'two'}
+              onLimitChange={(limit) => update({ limit })}
+              onPrizeChange={(prize) => update({ prize })}
+              onWeekdayChange={(weekday) => update({ weekday })}
+            />
           )}
           {state.view === 'three' && (
             <>
@@ -571,63 +521,7 @@ export default function App() {
               onAdd={() => setDataAction('add')}
             />
           )}
-          {state.view === 'guide' && (
-            <div className="guide-grid">
-              <Panel
-                title={t('start_with_traceable_data')}
-                eyebrow="DATA PROVENANCE"
-                aside={<BookOpen size={22} />}
-              >
-                <p>{tx('the_app_uses_ten_years_of')}</p>
-                <p>{tx('latest_draw_means_the_newest_result')}</p>
-                <p>
-                  {tx('results_from')}{' '}
-                  <a
-                    href="https://news.sanook.com/lotto/archive/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Sanook archive <ArrowUpRight size={13} />
-                  </a>{' '}
-                  {tx('an_external_source_always_verify_prize')}
-                </p>
-                <p>{tx('the_server_maintains_the_shared_archive')}</p>
-              </Panel>
-              <Panel
-                title={t('read_the_charts_with_confidence')}
-                eyebrow="READING THE NUMBERS"
-              >
-                <ul className="reading-guide">
-                  <li>
-                    <b>{tx('frequency_by_position')}</b>
-                    <span>{tx('digits_0_9_are_counted_in')}</span>
-                  </li>
-                  <li>
-                    <b>{tx('number_patterns')}</b>
-                    <span>{tx('of_all_numbers_000_999_72')}</span>
-                  </li>
-                  <li>
-                    <b>{tx('low_high_and_even_odd')}</b>
-                    <span>{tx('low_means_000_499_and_high')}</span>
-                  </li>
-                  <li>
-                    <b>{tx('filter_by_weekday')}</b>
-                    <span>{tx('weekday_filtering_comes_first_then_the')}</span>
-                  </li>
-                </ul>
-              </Panel>
-              <Panel
-                title={t('scores_are_not_predictions')}
-                eyebrow="TRANSPARENT BY DESIGN"
-              >
-                <p>{tx('scores_describe_historical_alignment_only_a')}</p>
-                <Formula picks />
-                <div className="info-box">
-                  {tx('small_samples_can_fluctuate_substantially_always')}
-                </div>
-              </Panel>
-            </div>
-          )}
+          {state.view === 'guide' && <GuidePage />}
           <footer className="footer">
             <div>
               <FlaskConical size={17} />

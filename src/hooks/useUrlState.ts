@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import type { Filters, PrizeType, View } from '../lib/types';
+import { DEFAULT_ANALYSIS_WINDOW } from '../lib/analytics';
+import type { PrizeType, View } from '../lib/types';
 
 const views: View[] = [
   'overview',
@@ -15,9 +16,10 @@ function read() {
     view: views.includes(p.get('view') as View)
       ? (p.get('view') as View)
       : 'overview',
-    limit: ['10', '20', 'all'].includes(p.get('limit') ?? '')
-      ? (p.get('limit') as Filters['limit'])
-      : 'all',
+    limit:
+      Number.isSafeInteger(Number(p.get('limit'))) && Number(p.get('limit')) > 0
+        ? Number(p.get('limit'))
+        : DEFAULT_ANALYSIS_WINDOW,
     prize: ['all', 'top', 'front', 'back'].includes(p.get('prize') ?? '')
       ? (p.get('prize') as PrizeType)
       : 'all',
@@ -28,6 +30,9 @@ function read() {
     pickDraw: /^\d{4}-\d{2}-\d{2}$/.test(p.get('pickDraw') ?? '')
       ? p.get('pickDraw')!
       : 'next',
+    thaksaDate: /^\d{4}-\d{2}-\d{2}$/.test(p.get('thaksaDate') ?? '')
+      ? p.get('thaksaDate')!
+      : '',
     pickDigits: ['2', '3', '6'].includes(p.get('pickDigits') ?? '')
       ? (p.get('pickDigits') as '2' | '3' | '6')
       : '2',

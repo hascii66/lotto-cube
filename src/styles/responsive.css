@@ -1,0 +1,1032 @@
+@media (min-width: 1600px) {
+  main {
+    padding-top: 42px;
+  }
+  .latest-row {
+    grid-template-columns: minmax(0, 1fr) 270px;
+  }
+  .draw-ticket {
+    grid-template-columns: minmax(0, 1fr) 210px;
+  }
+  .ticket-main {
+    padding: 26px 30px 19px;
+  }
+  .prize-digits > span {
+    width: 46px;
+    height: 55px;
+    font-size: 39px;
+  }
+  .ticket-prize {
+    padding-top: 25px;
+  }
+  .ticket-stub {
+    padding: 28px;
+  }
+  .ticket-stub strong {
+    font-size: 21px;
+  }
+  .context-card {
+    padding: 25px;
+  }
+  .context-card h2 {
+    font-size: 30px;
+  }
+  .chart-plot {
+    height: 165px;
+  }
+}
+@media (max-width: 1250px) {
+  :root {
+    --sidebar-width: 215px;
+  }
+  .sidebar {
+    padding-inline: 13px;
+  }
+  .nav-active:before {
+    left: -13px;
+  }
+  main {
+    padding-inline: 26px;
+  }
+  .topbar {
+    padding-inline: 26px;
+  }
+  .latest-row {
+    grid-template-columns: minmax(0, 1fr) 195px;
+    gap: 16px;
+  }
+  .draw-ticket {
+    grid-template-columns: minmax(0, 1fr) 143px;
+  }
+  .ticket-main {
+    padding-inline: 19px;
+  }
+  .ticket-stub {
+    padding-inline: 16px;
+  }
+  .ticket-heading {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .ticket-heading time {
+    font-size: 12px;
+  }
+  .ticket-prize {
+    padding-top: 15px;
+    gap: 13px;
+  }
+  .prize-digits {
+    gap: 4px;
+  }
+  .prize-digits > span {
+    width: 29px;
+    height: 40px;
+    font-size: 27px;
+  }
+  .ticket-last {
+    padding-left: 13px;
+  }
+  .ticket-last strong {
+    font-size: 36px;
+  }
+  .ticket-stub strong {
+    font-size: 16px;
+  }
+  .context-card {
+    padding-inline: 17px;
+  }
+  .context-card h2 {
+    font-size: 23px;
+  }
+  .filter-bar {
+    gap: 9px;
+  }
+  .filter-label {
+    font-size: 12px;
+    gap: 6px;
+  }
+  .filter-control select {
+    font-size: 12px;
+  }
+  .metric {
+    padding-inline: 14px;
+  }
+  .metric-label {
+    font-size: 12px;
+  }
+  .metric > small {
+    font-size: 12px;
+  }
+  .position-chart {
+    padding-inline: 18px;
+  }
+  .chart-bars {
+    gap: 5px;
+  }
+  .chart-leaders {
+    gap: 7px;
+  }
+  .leader {
+    gap: 3px;
+    font-size: 12px;
+  }
+  .picks-grid {
+    gap: 8px;
+  }
+  .pick {
+    padding: 12px 9px;
+    grid-template-columns: 14px 1fr 10px;
+  }
+  .pick > b {
+    font-size: 19px;
+  }
+}
+@media (max-width: 1080px) {
+  .latest-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .context-card {
+    display: none;
+  }
+  .ticket-heading {
+    flex-wrap: nowrap;
+  }
+  .draw-ticket {
+    grid-template-columns: minmax(0, 1fr) 170px;
+    min-height: 205px;
+  }
+  .prize-digits > span {
+    width: 36px;
+    height: 47px;
+    font-size: 32px;
+  }
+  .ticket-main {
+    padding: 21px 23px 15px;
+  }
+  .ticket-prize {
+    padding-top: 19px;
+  }
+  .ticket-stub {
+    padding: 26px 20px;
+  }
+  .ticket-stub strong {
+    font-size: 19px;
+  }
+  .filter-label {
+    display: none;
+  }
+  .filter-control select {
+    font-size: 12px;
+  }
+  .metric-grid {
+    gap: 10px;
+  }
+  .metric-label > svg {
+    display: none;
+  }
+  .metric-value strong {
+    font-size: 26px;
+  }
+  .position-grid {
+    grid-template-columns: 1fr;
+  }
+  .position-chart {
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
+    padding: 12px 23px 20px;
+  }
+  .position-chart:last-child {
+    border: 0;
+  }
+  .chart-plot {
+    height: 110px;
+  }
+  .chart-bars {
+    gap: 20px;
+  }
+  .bar {
+    max-width: 40px;
+  }
+  .chart-leaders {
+    font-size: 12px;
+    gap: 15px;
+  }
+  .leader {
+    font-size: 12px;
+    gap: 7px;
+  }
+  .analysis-grid {
+    gap: 15px;
+  }
+  .panel-heading {
+    padding-inline: 20px;
+  }
+  .pattern-list {
+    padding-inline: 18px;
+  }
+  .pattern-row {
+    gap: 9px;
+  }
+  .pattern-example {
+    width: 34px;
+    font-size: 12px;
+  }
+  .pattern-content > div:first-child {
+    font-size: 12px;
+  }
+  .pattern-meta {
+    font-size: 12px;
+  }
+  .split-stats {
+    padding-inline: 18px;
+  }
+  .split-stats > div > span small {
+    display: block;
+    margin: 2px 0 0;
+  }
+  .picks-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding-inline: 18px;
+  }
+  .pick {
+    grid-template-columns: 1fr 10px;
+  }
+  .pick-rank {
+    grid-column: 1 / 3;
+  }
+  .pick-score {
+    grid-column: 1 / 3;
+  }
+  .heatmap {
+    gap: 5px;
+  }
+  .heat-cell > span {
+    font-size: 16px;
+  }
+  .heatmap-intro {
+    flex-wrap: wrap;
+  }
+  .scorer-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .scorer-form > .button {
+    align-self: flex-end;
+    height: 43px;
+  }
+  .permutation-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .guide-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-edition {
+    display: none;
+  }
+}
+@media (max-width: 800px) {
+  :root {
+    --sidebar-width: 0px;
+  }
+  .sidebar {
+    width: 250px;
+    transform: translateX(-100%);
+    transition: transform 180ms;
+    z-index: 60;
+    padding-inline: 18px;
+  }
+  .sidebar-open {
+    transform: translateX(0);
+  }
+  .sidebar-open .brand {
+    margin-top: 24px;
+  }
+  .mobile-close {
+    display: flex;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+  .menu-button {
+    display: flex;
+    margin-left: -8px;
+  }
+  .desktop-breadcrumb,
+  .breadcrumb-slash {
+    display: none;
+  }
+  .nav-scrim {
+    position: fixed;
+    inset: 0;
+    background: #112b3566;
+    border: 0;
+    z-index: 55;
+  }
+  .topbar {
+    min-height: 64px;
+    padding-inline: 24px;
+  }
+  .header-metadata {
+    gap: 12px;
+  }
+  .latest-date {
+    font-size: 12px;
+  }
+  .breadcrumb {
+    font-size: 13px;
+    gap: 8px;
+  }
+  .page-heading h1 {
+    font-size: 31px;
+  }
+  main {
+    padding: 28px 24px 0;
+  }
+  .latest-row {
+    grid-template-columns: minmax(0, 1fr) 190px;
+  }
+  .context-card {
+    display: block;
+  }
+  .draw-ticket {
+    grid-template-columns: minmax(0, 1fr) 130px;
+  }
+  .prize-digits > span {
+    width: 27px;
+    height: 38px;
+    font-size: 25px;
+  }
+  .ticket-main {
+    padding: 20px 17px 13px;
+  }
+  .ticket-stub {
+    padding: 26px 13px 17px;
+  }
+  .ticket-stub strong {
+    font-size: 13px;
+  }
+  .ticket-heading {
+    flex-wrap: wrap;
+  }
+  .ticket-prize {
+    gap: 10px;
+  }
+  .ticket-last {
+    padding-left: 10px;
+  }
+  .ticket-last strong {
+    font-size: 30px;
+  }
+  .ticket-label {
+    font-size: 12px;
+  }
+  .ticket-bottom > span {
+    font-size: 12px;
+  }
+  .context-card h2 {
+    font-size: 23px;
+  }
+  .position-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .position-chart {
+    padding: 5px 17px 18px;
+    border-right: 1px solid var(--color-border);
+    border-bottom: 0;
+  }
+  .chart-bars {
+    gap: 5px;
+  }
+  .chart-leaders {
+    gap: 5px;
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+  .chart-leaders > span:first-child {
+    display: none;
+  }
+  .leader {
+    font-size: 12px;
+    gap: 3px;
+  }
+  .two-positions {
+    grid-template-columns: 1fr 1fr;
+  }
+  .position-title > span {
+    font-size: 12px;
+  }
+  .metric-label > svg {
+    display: block;
+  }
+  .metric-grid {
+    gap: 12px;
+  }
+  .toast {
+    left: 50%;
+  }
+}
+
+@media (max-width: 650px) {
+  .latest-row {
+    grid-template-columns: 1fr;
+  }
+  .context-card {
+    display: none;
+  }
+  .draw-ticket {
+    grid-template-columns: minmax(0, 1fr) 145px;
+  }
+  .ticket-heading {
+    flex-wrap: nowrap;
+  }
+  .ticket-main {
+    padding: 20px;
+  }
+  .ticket-stub {
+    padding: 26px 16px 18px;
+  }
+  .prize-digits > span {
+    width: 31px;
+    height: 43px;
+    font-size: 29px;
+  }
+  .ticket-stub strong {
+    font-size: 17px;
+  }
+  .ticket-prize {
+    padding-top: 22px;
+    padding-bottom: 20px;
+  }
+  .ticket-last strong {
+    font-size: 35px;
+  }
+  .ticket-label {
+    font-size: 12px;
+  }
+  .page-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 17px;
+  }
+  .page-heading .page-heading p {
+    font-size: 12px;
+  }
+  .page-heading h1 {
+    font-size: 29px;
+  }
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .metric {
+    padding: 16px;
+  }
+  .metric-label {
+    font-size: 12px;
+  }
+  .metric-value strong {
+    font-size: 31px;
+  }
+  .metric > small {
+    font-size: 12px;
+  }
+  .filter-bar {
+    padding: 12px;
+    gap: 9px;
+  }
+  .filter-control {
+    flex: 1;
+    min-width: 42%;
+  }
+  .filter-control select,
+  .filter-control input[type='number'] {
+    width: 100%;
+    font-size: 12px;
+    min-height: 38px;
+  }
+  .filter-prize {
+    order: 3;
+    flex-basis: 100%;
+  }
+  .filter-result {
+    order: 4;
+    width: 100%;
+    justify-content: flex-end;
+    padding-top: 2px;
+  }
+  .position-grid,
+  .two-positions {
+    grid-template-columns: 1fr;
+  }
+  .position-chart {
+    padding: 15px 23px 22px;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .chart-plot {
+    height: 135px;
+    margin-top: 29px;
+  }
+  .chart-bars {
+    gap: 12px;
+  }
+  .bar {
+    max-width: 31px;
+  }
+  .bar-value {
+    font-size: 12px;
+    top: -18px;
+  }
+  .bar-label {
+    font-size: 12px;
+  }
+  .position-title h3 {
+    font-size: 13px;
+  }
+  .position-title > span {
+    font-size: 12px;
+  }
+  .chart-leaders {
+    gap: 16px;
+    font-size: 12px;
+  }
+  .chart-leaders > span:first-child {
+    display: block;
+  }
+  .leader {
+    font-size: 12px;
+    gap: 6px;
+  }
+  .leader b {
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+  }
+  .analysis-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .panel-heading {
+    padding: 21px 20px 18px;
+  }
+  .panel-heading h2 {
+    font-size: 17px;
+  }
+  .chart-legend {
+    font-size: 12px;
+    gap: 4px;
+  }
+  .chart-legend .legend-rule {
+    margin-left: 4px;
+  }
+  .pattern-list {
+    padding: 0 20px 5px;
+  }
+  .pattern-row {
+    gap: 15px;
+    margin-bottom: 22px;
+  }
+  .pattern-example {
+    width: 43px;
+    height: 38px;
+    font-size: 13px;
+  }
+  .pattern-content > div:first-child {
+    font-size: 13px;
+  }
+  .pattern-meta {
+    font-size: 12px;
+  }
+  .split-stats {
+    padding: 19px 20px;
+  }
+  .split-stats > div > span {
+    font-size: 13px;
+  }
+  .split-stats b {
+    font-size: 24px;
+  }
+  .split-stats > div > span small {
+    display: inline;
+    margin-left: 5px;
+    font-size: 12px;
+  }
+  .split-stats > div > small {
+    font-size: 12px;
+  }
+  .sum-chart {
+    height: 145px;
+  }
+  .sum-axis {
+    font-size: 12px;
+  }
+  .analysis-grid .subtle-note {
+    font-size: 12px;
+  }
+  .sum-summary > div > span {
+    font-size: 16px;
+  }
+  .sum-summary small {
+    font-size: 12px;
+  }
+  .picks-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-inline: 20px;
+    gap: 10px;
+  }
+  .pick {
+    grid-template-columns: 17px 1fr 16px;
+    gap: 8px 7px;
+    padding: 14px;
+  }
+  .pick-rank {
+    grid-column: auto;
+    font-size: 12px;
+  }
+  .pick > b {
+    font-size: 24px;
+  }
+  .pick-score {
+    grid-column: 2 / 4;
+    font-size: 16px;
+  }
+  .pick-score small {
+    font-size: 12px;
+  }
+  .shortlist-note {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .shortlist-note > span {
+    font-size: 12px;
+  }
+  .shortlist-note .text-link {
+    font-size: 13px;
+  }
+  .section-title > span {
+    display: none;
+  }
+  .section-title h2 {
+    font-size: 19px;
+  }
+  .heatmap-layout {
+    margin-inline: 14px;
+  }
+  .heatmap {
+    gap: 3px;
+  }
+  .heat-cell {
+    padding: 9px 0;
+    gap: 5px;
+    border-radius: 4px;
+  }
+  .heat-cell > span {
+    font-size: 16px;
+  }
+  .heat-cell small {
+    font-size: 12px;
+  }
+  .heatmap-intro {
+    padding-inline: 18px;
+  }
+  .group-tabs {
+    margin-inline: 18px;
+    display: flex;
+  }
+  .group-tabs button {
+    flex: 1;
+    padding: 6px 7px;
+    font-size: 12px;
+  }
+  .group-tabs button > span {
+    display: block;
+    width: max-content;
+    margin: 4px auto 0;
+  }
+  .inline-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .scorer-form {
+    padding-inline: 20px;
+    gap: 14px;
+  }
+  .scorer-inputs {
+    gap: 8px;
+  }
+  .scorer-inputs label {
+    font-size: 12px;
+  }
+  .scorer-inputs label small {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+  }
+  .number-input {
+    font-size: 23px;
+    letter-spacing: 2px;
+    padding: 10px 6px;
+  }
+  .scorer-inputs > div:first-child > label {
+    min-height: 33px;
+  }
+  .scorer-form > .button {
+    width: 100%;
+  }
+  .score-components {
+    grid-template-columns: 1fr 1fr;
+    margin-inline: 20px;
+  }
+  .score-total > strong {
+    font-size: 29px;
+  }
+  .permutations-heading {
+    flex-direction: column;
+    gap: 9px;
+    padding-inline: 20px;
+  }
+  .permutation-grid {
+    margin-inline: 20px;
+  }
+  .permutation-grid > div {
+    padding: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .table-toolbar {
+    padding-inline: 18px;
+    flex-wrap: wrap;
+  }
+  .search-field {
+    max-width: none;
+  }
+  .table-summary {
+    line-height: 1.9;
+    padding-inline: 18px;
+  }
+  .pagination {
+    padding-inline: 16px;
+    font-size: 12px;
+  }
+  .guide-grid .panel > p {
+    font-size: 16px;
+  }
+  .reading-guide li {
+    font-size: 16px;
+  }
+  .footer {
+    margin-top: 24px;
+    padding-bottom: 26px;
+    gap: 10px;
+  }
+  .footer p {
+    font-size: 12px;
+    line-height: 1.9;
+  }
+}
+@media (max-width: 440px) {
+  main {
+    padding: 23px 16px 0;
+  }
+  .topbar {
+    padding-inline: 16px;
+    min-height: 61px;
+  }
+  .header-metadata {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .database-pill {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
+  .latest-date {
+    font-size: 12px;
+  }
+  .latest-date b {
+    margin-left: 3px;
+  }
+  .breadcrumb {
+    font-size: 12px;
+  }
+  .page-heading h1 {
+    font-size: 27px;
+  }
+  .draw-ticket {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .ticket-main {
+    padding: 18px 19px 13px;
+  }
+  .ticket-heading time {
+    font-size: 12px;
+  }
+  .prize-digits > span {
+    width: 32px;
+    height: 43px;
+    font-size: 30px;
+  }
+  .ticket-prize {
+    padding: 22px 0 19px;
+  }
+  .latest-peek .ticket-prize {
+    padding: 12px 0 16px;
+  }
+  .ticket-last {
+    padding-left: 15px;
+  }
+  .ticket-last strong {
+    font-size: 36px;
+  }
+  .ticket-label {
+    font-size: 12px;
+  }
+  .ticket-bottom > span {
+    font-size: 12px;
+  }
+  .ticket-stub {
+    border-left: 0;
+    border-top: 1px dashed var(--color-border);
+    padding: 17px 19px;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .ticket-stub:before {
+    top: -7px;
+    left: -8px;
+  }
+  .ticket-stub:after {
+    top: -7px;
+    left: auto;
+    right: -8px;
+  }
+  .ticket-stub strong {
+    font-size: 19px;
+  }
+  .ticket-stub > div:not(.stub-lines) {
+    gap: 6px;
+  }
+  .stub-lines {
+    display: none;
+  }
+  .metric {
+    padding: 15px 12px;
+  }
+  .metric-label {
+    font-size: 12px;
+  }
+  .metric-label > svg {
+    width: 14px;
+  }
+  .metric-value strong {
+    font-size: 30px;
+  }
+  .metric-value > span {
+    font-size: 12px;
+  }
+  .metric > small {
+    font-size: 12px;
+  }
+  .panel-heading h2 {
+    font-size: 16px;
+  }
+  .panel-heading .mini-tag {
+    font-size: 12px;
+    padding: 4px 6px;
+  }
+  .chart-legend {
+    max-width: 116px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 5px;
+  }
+  .panel-footnote {
+    font-size: 12px;
+    line-height: 1.9;
+    padding-inline: 18px;
+  }
+  .pattern-meta {
+    font-size: 12px;
+  }
+  .split-stats > div > span small {
+    font-size: 12px;
+    margin-left: 2px;
+  }
+  .heat-cell {
+    min-height: 44px;
+  }
+  .heat-cell > span {
+    font-size: 12px;
+  }
+  .heat-cell small {
+    font-size: 12px;
+  }
+  .heatmap {
+    gap: 3px;
+  }
+  .heatmap-layout {
+    margin-inline: 10px;
+  }
+  .modal {
+    padding: 21px 18px;
+    width: calc(100% - 24px);
+    max-height: calc(100dvh - 24px);
+  }
+  .modal-heading h2 {
+    font-size: 21px;
+  }
+  .modal-heading .eyebrow {
+    font-size: 12px;
+  }
+  .modal-description {
+    font-size: 12px;
+  }
+  .modal-actions {
+    flex-wrap: wrap;
+  }
+  .modal-actions .button {
+    flex: 1;
+    font-size: 12px;
+    padding-inline: 10px;
+  }
+  .entry-grid {
+    gap: 2px 11px;
+  }
+  .field label {
+    font-size: 12px;
+  }
+  .field input.mono {
+    font-size: 18px;
+  }
+  .sync-source {
+    padding: 13px;
+    gap: 10px;
+  }
+  .sync-source .mini-tag {
+    display: none;
+  }
+  .toast {
+    font-size: 12px;
+    bottom: max(16px, env(safe-area-inset-bottom));
+  }
+}
+@media (max-width: 360px) {
+  .prize-digits {
+    gap: 3px;
+  }
+  .prize-digits > span {
+    width: 26px;
+    height: 37px;
+    font-size: 25px;
+  }
+  .ticket-last {
+    padding-left: 10px;
+  }
+  .ticket-last strong {
+    font-size: 31px;
+  }
+  .ticket-heading {
+    gap: 5px;
+  }
+  .ticket-heading > span,
+  .ticket-heading time {
+    font-size: 12px;
+  }
+  .ticket-stub strong {
+    font-size: 17px;
+  }
+  .chart-leaders {
+    gap: 9px;
+  }
+  .leader {
+    gap: 3px;
+  }
+  .split-stats > div > span small {
+    display: block;
+    margin-left: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *:before,
+  *:after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (forced-colors: active) {
+  :root {
+    scrollbar-color: auto;
+  }
+  button,
+  .button,
+  .bar,
+  .sum-bar,
+  .heat-cell,
+  .nav-active {
+    border: 1px solid ButtonText;
+  }
+}
