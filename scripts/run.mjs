@@ -29,6 +29,7 @@ if (!production)
         'node_modules/vite/bin/vite.js',
         '--host',
         '127.0.0.1',
+        '--strictPort',
         ...process.argv.slice(2),
       ],
       { stdio: 'inherit' },

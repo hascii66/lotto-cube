@@ -1,5 +1,11 @@
 import { t } from './i18n';
-import type { Draw, Filters, Occurrence, PrizeType } from './types';
+import type {
+  Draw,
+  Filters,
+  Occurrence,
+  PickCategory,
+  PrizeType,
+} from './types';
 import { weekdayOf } from './format';
 export const DEFAULT_ANALYSIS_WINDOW = 120;
 
@@ -154,10 +160,17 @@ export function nextDrawPicks(
   draws: Draw[],
   digits: 2 | 3 | 6,
   allowedDigits?: number[],
+  threeAward: 'front' | 'back' = 'back',
 ) {
   if (!draws.length) return [];
   const values = draws.flatMap((draw) =>
-    digits === 2 ? [draw.last2] : digits === 3 ? draw.back3 : [draw.prize1],
+    digits === 2
+      ? [draw.last2]
+      : digits === 3
+        ? threeAward === 'front'
+          ? draw.front3
+          : draw.back3
+        : [draw.prize1],
   );
   if (digits === 2) {
     const counts = new Map<string, number>();
@@ -198,6 +211,65 @@ export function nextDrawPicks(
   }
   return picks.map((pick) => ({ ...pick, score: (pick.score / digits) * 100 }));
 }
+
+export function randomHistoricalNumber(
+  draws: Draw[],
+  category: PickCategory,
+  exclude = '',
+) {
+  if (!draws.length) return '';
+  const digits = category === '2' ? 2 : category === '6' ? 6 : 3;
+  const values = draws.flatMap((draw) =>
+    category === '2'
+      ? [draw.last2]
+      : category === 'front3'
+        ? draw.front3
+        : category === 'back3'
+          ? draw.back3
+          : [draw.prize1],
+  );
+
+  if (category === '2') {
+    const counts = new Map<string, number>();
+    values.forEach((number) =>
+      counts.set(number, (counts.get(number) ?? 0) + 1),
+    );
+    const candidates = Array.from({ length: 100 }, (_, number) =>
+      String(number).padStart(2, '0'),
+    ).filter((number) => number !== exclude);
+    return weightedChoice(
+      candidates,
+      candidates.map((n) => (counts.get(n) ?? 0) + 1),
+    );
+  }
+
+  for (let attempt = 0; attempt < 100; attempt++) {
+    const number = Array.from({ length: digits }, (_, position) => {
+      const counts = frequency(values, position).map((count) => count + 1);
+      return String(weightedChoice(counts.map(String), counts));
+    }).join('');
+    if (number !== exclude) return number;
+  }
+  return '';
+}
+
+export function formatRandomNumber(number: string, category: PickCategory) {
+  const length = category === '2' ? 2 : category === '6' ? 6 : 3;
+  const digits =
+    category === 'front3' ? number.slice(0, length) : number.slice(-length);
+  return digits.padStart(length, '0');
+}
+
+function weightedChoice<T>(items: T[], weights: number[]): T {
+  const total = weights.reduce((sum, weight) => sum + weight, 0);
+  let draw = Math.random() * total;
+  for (let index = 0; index < items.length; index++) {
+    draw -= weights[index];
+    if (draw < 0) return items[index];
+  }
+  return items.at(-1)!;
+}
+
 export function picksForDraw(
   draws: Draw[],
   date = 'next',
@@ -214,24 +286,35 @@ export function picksForDraw(
             limit,
           )
         : [];
-  const groups = ([2, 3, 6] as const).map((digits) => {
-    const picks = nextDrawPicks(history, digits);
-    const actual = target
-      ? digits === 2
-        ? [target.last2]
-        : digits === 3
-          ? target.back3
-          : [target.prize1]
-      : [];
-    return {
-      digits,
-      picks,
-      actual,
-      matched: actual.filter((number) =>
-        picks.some((pick) => pick.number === number),
-      ),
-    };
-  });
+  const groups = (['2', 'front3', 'back3', '6'] as const).map(
+    (category: PickCategory) => {
+      const digits: 2 | 3 | 6 = category === '2' ? 2 : category === '6' ? 6 : 3;
+      const picks = nextDrawPicks(
+        history,
+        digits,
+        undefined,
+        category === 'front3' ? 'front' : 'back',
+      );
+      const actual = target
+        ? category === '2'
+          ? [target.last2]
+          : category === 'front3'
+            ? target.front3
+            : category === 'back3'
+              ? target.back3
+              : [target.prize1]
+        : [];
+      return {
+        category,
+        digits,
+        picks,
+        actual,
+        matched: actual.filter((number) =>
+          picks.some((pick) => pick.number === number),
+        ),
+      };
+    },
+  );
   return { target, history, groups };
 }
 export function scoreTwo(number: string, stats: ReturnType<typeof analyzeTwo>) {

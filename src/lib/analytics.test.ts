@@ -7,6 +7,7 @@ import {
   analyzeTwo,
   digitSum,
   findOccurrences,
+  formatRandomNumber,
   patternOf,
   permutations,
   scoreThree,
@@ -17,6 +18,17 @@ import {
   picksForDraw,
 } from './analytics';
 import { weekdayOf } from './format';
+
+describe('random number formatting', () => {
+  it('keeps output length and front/back positions tied to the selected award', () => {
+    expect(formatRandomNumber('282536', 'front3')).toBe('282');
+    expect(formatRandomNumber('282536', 'back3')).toBe('536');
+    expect(formatRandomNumber('282536', '2')).toBe('36');
+    expect(formatRandomNumber('282536', '6')).toBe('282536');
+    expect(formatRandomNumber('028', 'front3')).toBe('028');
+    expect(formatRandomNumber('8', 'back3')).toBe('008');
+  });
+});
 
 describe('statistics from the supplied historical results', () => {
   it('reconstructs picks from strictly earlier draws and compares exact award results', () => {
@@ -46,16 +58,25 @@ describe('statistics from the supplied historical results', () => {
     expect(result.target).toEqual(target);
     expect(result.groups.map((group) => group.actual)).toEqual([
       ['09'],
+      ['290', '742'],
       ['070', '999'],
       ['000001'],
     ]);
     expect(result.groups.map((group) => group.matched)).toEqual([
       ['09'],
+      ['290', '742'],
       ['070'],
       ['000001'],
     ]);
     for (const group of result.groups)
-      expect(group.picks).toEqual(nextDrawPicks([earlier], group.digits));
+      expect(group.picks).toEqual(
+        nextDrawPicks(
+          [earlier],
+          group.digits,
+          undefined,
+          group.category === 'front3' ? 'front' : 'back',
+        ),
+      );
     const changed = picksForDraw(
       [
         { ...later, last2: '00', prize1: '123456' },
@@ -88,7 +109,14 @@ describe('statistics from the supplied historical results', () => {
       ),
     ).toBe(true);
     for (const group of next.groups)
-      expect(group.picks).toEqual(nextDrawPicks(draws, group.digits));
+      expect(group.picks).toEqual(
+        nextDrawPicks(
+          draws,
+          group.digits,
+          undefined,
+          group.category === 'front3' ? 'front' : 'back',
+        ),
+      );
   });
   it('ranks exact 2-digit pairs and exhaustive positional 3-digit combinations', () => {
     for (const digits of [2, 3] as const) {

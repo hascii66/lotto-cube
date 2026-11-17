@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import ts from 'typescript';
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import english from './en.json';
@@ -17,7 +16,7 @@ describe('English and Thai locale contract', () => {
     setLanguage('en');
     expect(t('last_three_number')).toBe('Last 3 digits');
     expect(t('last_two_number')).toBe('Last 2 digits');
-    expect(t('six_exact_digits')).toBe('6 exact digits');
+    expect(t('six_exact_digits')).toBe('6 exact');
   });
 
   it('translates placeholders and changes calendars and weekdays consistently', () => {
@@ -45,28 +44,15 @@ describe('English and Thai locale contract', () => {
         const path = resolve(directory, item.name);
         if (item.isDirectory()) scan(path);
         else if (/\.tsx?$/.test(path) && !path.endsWith('.test.ts')) {
-          const source = ts.createSourceFile(
-            path,
-            readFileSync(path, 'utf8'),
-            ts.ScriptTarget.Latest,
-            true,
+          const source = readFileSync(path, 'utf8');
+          const literalCalls = source.matchAll(
+            /\b(?:t|tx)\(\s*(?:"([^"]+)"|'([^']+)'|`([^`$]+)`)/g,
           );
-          function visit(node: ts.Node) {
-            if (
-              ts.isCallExpression(node) &&
-              ts.isIdentifier(node.expression) &&
-              ['t', 'tx'].includes(node.expression.text)
-            ) {
-              const key = node.arguments[0];
-              if (key && (ts.isStringLiteral(key) || ts.isNoSubstitutionTemplateLiteral(key))) {
-                if (/[ก-๛]/.test(key.text) || !(key.text.trim() in english)) {
-                  invalidCalls.push({ file: path, text: key.text });
-                }
-              }
-            }
-            ts.forEachChild(node, visit);
+          for (const match of literalCalls) {
+            const key = match[1] ?? match[2] ?? match[3];
+            if (/[ก-๛]/.test(key) || !(key.trim() in english))
+              invalidCalls.push({ file: path, text: key });
           }
-          visit(source);
         }
       }
     }

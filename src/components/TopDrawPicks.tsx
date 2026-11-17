@@ -1,23 +1,29 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowUpRight,
   CalendarDays,
   ChartNoAxesColumnIncreasing,
   Check,
+  Dices,
   Info,
 } from 'lucide-react';
 import {
   DEFAULT_ANALYSIS_WINDOW,
   findOccurrences,
+  formatRandomNumber,
   nextDrawPicks,
   picksForDraw,
+  randomHistoricalNumber,
 } from '../lib/analytics';
 import { formatDate, formatNumber, weekdays } from '../lib/format';
 import { t } from '../lib/i18n';
-import type { AnalysisWindow, Draw, View } from '../lib/types';
+import type { AnalysisWindow, Draw, PickCategory, View } from '../lib/types';
 import { thaksaForDate } from '../lib/thaksa';
 import { Empty, Formula, Modal, Panel } from './ui';
 import { AnalysisWindowSelect } from './AnalysisFilters';
+
+const rollNumber = (length: number) =>
+  Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
 
 export function TopDrawPicks({
   draws,
@@ -36,8 +42,8 @@ export function TopDrawPicks({
   onTargetChange: (date: string) => void;
   thaksaDate: string;
   onThaksaDateChange: (date: string) => void;
-  digits: '2' | '3' | '6';
-  onDigitsChange: (digits: '2' | '3' | '6') => void;
+  digits: PickCategory;
+  onDigitsChange: (digits: PickCategory) => void;
   limit: AnalysisWindow;
   onLimitChange: (limit: AnalysisWindow) => void;
   onNavigate: (view: View) => void;
@@ -59,33 +65,111 @@ export function TopDrawPicks({
     (latest, draw) => (draw.date > latest ? draw.date : latest),
     '',
   );
-  const leadingPick = groups.find((group) => String(group.digits) === digits)
-    ?.picks[0]?.number;
+  const selectedGroup = groups.find((group) => group.category === digits);
+  const leadingPick = selectedGroup?.picks[0]?.number;
   const thaksaTargetDate = past ? target?.date : thaksaDate;
   const thaksa = thaksaTargetDate ? thaksaForDate(thaksaTargetDate) : undefined;
   const thaksaPicks = thaksa
     ? nextDrawPicks(
         history,
-        Number(digits) as 2 | 3 | 6,
+        digits === '2' ? 2 : digits === '6' ? 6 : 3,
         thaksa.favorableDigits,
+        digits === 'front3' ? 'front' : 'back',
       )
     : [];
-  const label = (digits: 2 | 3 | 6) =>
-    digits === 2
+  const label = (category: PickCategory) =>
+    category === '2'
       ? t('last_two_digits')
-      : digits === 3
-        ? t('last_three_digits')
-        : t('first_prize_six_exact');
+      : category === 'front3'
+        ? t('front_three_number')
+        : category === 'back3'
+          ? t('last_three_number')
+          : t('first_prize_six_exact');
+  const expectedLength = digits === '2' ? 2 : digits === '6' ? 6 : 3;
+  const randomPlaceholder = '0'.repeat(expectedLength);
   const [selected, setSelected] = useState<{
     number: string;
-    digits: 2 | 3 | 6;
+    category: PickCategory;
   } | null>(null);
-  useEffect(() => setSelected(null), [targetDate, digits, limit]);
+  const [randomNumber, setRandomNumber] = useState<{
+    category: PickCategory;
+    number: string;
+  } | null>(null);
+  const [rollingNumber, setRollingNumber] = useState<{
+    category: PickCategory;
+    number: string;
+  } | null>(null);
+  const [isRolling, setIsRolling] = useState(false);
+  const rollInterval = useRef<number | null>(null);
+  const rollTimeout = useRef<number | null>(null);
+  const currentRandomNumber =
+    randomNumber?.category === digits && randomNumber.number
+      ? formatRandomNumber(randomNumber.number, digits)
+      : '';
+  const currentRollingNumber =
+    rollingNumber?.category === digits && rollingNumber.number
+      ? formatRandomNumber(rollingNumber.number, digits)
+      : '';
+  const currentIsRolling = isRolling && rollingNumber?.category === digits;
+  useEffect(() => {
+    if (rollInterval.current !== null)
+      window.clearInterval(rollInterval.current);
+    if (rollTimeout.current !== null) window.clearTimeout(rollTimeout.current);
+    setIsRolling(false);
+    setRollingNumber(null);
+    setSelected(null);
+    setRandomNumber(null);
+    return () => {
+      if (rollInterval.current !== null)
+        window.clearInterval(rollInterval.current);
+      if (rollTimeout.current !== null)
+        window.clearTimeout(rollTimeout.current);
+    };
+  }, [targetDate, digits, limit]);
+
+  const randomize = () => {
+    const rawResult = randomHistoricalNumber(
+      history,
+      digits,
+      currentRandomNumber,
+    );
+    if (!rawResult) return;
+    const result = formatRandomNumber(rawResult, digits);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setRandomNumber({ category: digits, number: result });
+      return;
+    }
+    setRandomNumber(null);
+    setRollingNumber({ category: digits, number: rollNumber(expectedLength) });
+    setIsRolling(true);
+    rollInterval.current = window.setInterval(
+      () =>
+        setRollingNumber({
+          category: digits,
+          number: rollNumber(expectedLength),
+        }),
+      55,
+    );
+    rollTimeout.current = window.setTimeout(() => {
+      if (rollInterval.current !== null)
+        window.clearInterval(rollInterval.current);
+      rollInterval.current = null;
+      rollTimeout.current = null;
+      setRollingNumber(null);
+      setRandomNumber({ category: digits, number: result });
+      setIsRolling(false);
+    }, 1050);
+  };
+
   const hits = selected
     ? findOccurrences(
         history,
         [selected.number],
-        selected.digits === 3 ? 'back' : 'all',
+        selected.category === 'front3'
+          ? 'front'
+          : selected.category === 'back3'
+            ? 'back'
+            : 'all',
       )
     : [];
   return (
@@ -154,7 +238,7 @@ export function TopDrawPicks({
         role="group"
         aria-label={t('choose_pick_category')}
       >
-        {(['2', '3', '6'] as const).map((value) => (
+        {(['2', 'front3', 'back3', '6'] as const).map((value) => (
           <button
             key={value}
             type="button"
@@ -164,11 +248,59 @@ export function TopDrawPicks({
           >
             {value === '2'
               ? t('last_two_number')
-              : value === '3'
-                ? t('last_three_number')
-                : t('six_exact_digits')}
+              : value === 'front3'
+                ? t('front_three_number')
+                : value === 'back3'
+                  ? t('last_three_number')
+                  : t('six_exact_digits')}
           </button>
         ))}
+      </div>
+      <div
+        className={`random-pick-card${currentIsRolling ? ' is-rolling' : ''}`}
+        aria-busy={currentIsRolling}
+      >
+        <div>
+          <div className="random-pick-label">
+            <span className="random-pick-title">
+              {t('history_weighted_random')}
+            </span>
+            <span className="random-pick-category">{label(digits)}</span>
+          </div>
+          {currentRollingNumber ? (
+            <strong className="mono random-pick-number" aria-hidden="true">
+              {currentRollingNumber}
+            </strong>
+          ) : currentRandomNumber ? (
+            <strong
+              key={`${digits}-${currentRandomNumber}`}
+              className="mono random-pick-number is-result"
+              role="status"
+            >
+              {currentRandomNumber}
+            </strong>
+          ) : (
+            <span className="random-pick-number-placeholder" aria-hidden="true">
+              {randomPlaceholder}
+            </span>
+          )}
+        </div>
+        <button
+          className={`button random-pick-button${currentIsRolling ? ' is-rolling' : ''}`}
+          type="button"
+          disabled={!history.length || currentIsRolling}
+          onClick={randomize}
+        >
+          <Dices size={18} aria-hidden="true" />
+          {t(
+            currentIsRolling
+              ? 'rolling_number'
+              : currentRandomNumber
+                ? 'random_again'
+                : 'random_number',
+          )}
+        </button>
+        <p>{t('random_uses_full_range_with_history_weighting')}</p>
       </div>
       <p className="pick-score-note">
         <Info size={22} aria-hidden="true" />
@@ -221,13 +353,13 @@ export function TopDrawPicks({
       ) : (
         <div className="top-last-panels">
           {groups
-            .filter((group) => String(group.digits) === digits)
-            .map(({ digits, picks, actual, matched }) => {
+            .filter((group) => group.category === digits)
+            .map(({ category, picks, actual, matched }) => {
               return (
                 <Panel
-                  key={digits}
-                  className={`top-last-card${digits === 6 ? ' top-last-six' : ''}`}
-                  title={label(digits)}
+                  key={category}
+                  className={`top-last-card${category === '6' ? ' top-last-six' : ''}`}
+                  title={label(category)}
                   aside={
                     <span className="mini-tag">
                       {t('historical_index_100')}
@@ -253,17 +385,17 @@ export function TopDrawPicks({
                   {picks.length ? (
                     <ol
                       className="top-last-grid"
-                      aria-label={t('10_picks', [label(digits)])}
+                      aria-label={t('10_picks', [label(category)])}
                     >
                       {picks.map(({ number, score }, index) => (
                         <li key={number}>
                           <button
                             className={`top-last-number ${index === 0 ? 'top-last-leader' : ''}${matched.includes(number) ? ' top-last-match' : ''}`}
-                            onClick={() => setSelected({ number, digits })}
+                            onClick={() => setSelected({ number, category })}
                             aria-label={
                               t('rank_number_score_view_history', [
                                 index + 1,
-                                label(digits),
+                                label(category),
                                 number,
                                 formatNumber(Math.round(score * 10) / 10),
                               ]) +
@@ -361,7 +493,7 @@ export function TopDrawPicks({
       <p className="top-last-footnote">{t('score_note_disclaimer')}</p>
       {selected && (
         <Modal
-          title={t('history', [label(selected.digits), selected.number])}
+          title={t('history', [label(selected.category), selected.number])}
           description={t('occurrences_across_the_draws_used_for', [
             hits.length,
             formatNumber(history.length),

@@ -9,6 +9,7 @@ export interface Draw {
 
 export type PrizeType = 'all' | 'top' | 'front' | 'back';
 export type AnalysisWindow = number;
+export type PickCategory = '2' | 'front3' | 'back3' | '6';
 export type View =
   'overview' | 'three' | 'two' | 'scorer' | 'history' | 'guide';
 export interface Filters {

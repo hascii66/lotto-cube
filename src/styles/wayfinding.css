@@ -198,7 +198,7 @@ body,
 
 .pick-awards {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   width: 100%;
   gap: 8px;
   padding: 0;
@@ -227,6 +227,131 @@ body,
   border-color: var(--color-primary);
   background: var(--color-primary);
   box-shadow: none;
+}
+
+.random-pick-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin: 0 0 14px;
+  padding: 13px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  background: var(--color-surface);
+}
+
+.random-pick-card > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.random-pick-title,
+.random-pick-card > p {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.random-pick-card > div > strong {
+  color: #1d2024;
+  font-size: 26px;
+}
+
+.random-pick-label {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  overflow-wrap: anywhere;
+}
+
+.random-pick-category {
+  color: var(--color-ink);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.random-pick-number,
+.random-pick-number-placeholder {
+  display: inline-grid;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 42px;
+  place-items: center;
+  padding: 2px 12px;
+  border-radius: 12px;
+  background: var(--color-pick-accent);
+  color: #1d2024;
+  font-size: clamp(20px, 5vw, 28px);
+  font-variant-numeric: tabular-nums;
+  justify-self: end;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.random-pick-number-placeholder {
+  color: #51462e;
+  font-size: 13px;
+}
+
+.random-pick-card.is-rolling .random-pick-number {
+  color: var(--color-primary);
+  filter: blur(1px);
+  animation: number-reel 110ms ease-in-out infinite alternate;
+}
+
+.random-pick-number.is-result {
+  animation: number-land 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.random-pick-card > p {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 12px;
+}
+
+.random-pick-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.random-pick-button.is-rolling svg {
+  animation: dice-spin 650ms cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
+}
+
+@keyframes number-reel {
+  from {
+    transform: translateY(-3px) skewY(-2deg);
+  }
+  to {
+    transform: translateY(3px) skewY(2deg);
+  }
+}
+
+@keyframes number-land {
+  from {
+    opacity: 0.4;
+    filter: blur(5px);
+    transform: translateY(-8px) scale(0.88);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dice-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .pick-score-note {

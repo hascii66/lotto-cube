@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DEFAULT_ANALYSIS_WINDOW } from '../lib/analytics';
-import type { PrizeType, View } from '../lib/types';
+import type { PickCategory, PrizeType, View } from '../lib/types';
 
 const views: View[] = [
   'overview',
@@ -33,8 +33,12 @@ function read() {
     thaksaDate: /^\d{4}-\d{2}-\d{2}$/.test(p.get('thaksaDate') ?? '')
       ? p.get('thaksaDate')!
       : '',
-    pickDigits: ['2', '3', '6'].includes(p.get('pickDigits') ?? '')
-      ? (p.get('pickDigits') as '2' | '3' | '6')
+    pickDigits: ['2', 'front3', 'back3', '3', '6'].includes(
+      p.get('pickDigits') ?? '',
+    )
+      ? p.get('pickDigits') === '3'
+        ? 'back3'
+        : (p.get('pickDigits') as PickCategory)
       : '2',
     page: Math.max(1, Math.min(1000, Number(p.get('page')) || 1)),
   };
